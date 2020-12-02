@@ -1,0 +1,7 @@
+build*/
+cmake-build*/
+*.txt.user
+*.swp
+*.swo
+CMakeLists.txt.user
+CMakeFiles/

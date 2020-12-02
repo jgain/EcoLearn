@@ -1,0 +1,9 @@
+Biome stat ID PRIMARY,Biome stat name,Value
+0,Slope threshold,5.0
+1,Slope maximum,55.0
+2,Evaporation rate,0.25
+3,Runoff limit,100.0
+4,Soil saturation limit,180.0
+5,Riverlevel,5000.0
+6,Latitude,38.578
+7,Temp lapse rate,9.8

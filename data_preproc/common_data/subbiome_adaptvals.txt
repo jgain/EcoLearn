@@ -1,0 +1,13 @@
+SELECT * FROM
+(SELECT * FROM
+(SELECT * FROM
+(SELECT * FROM
+(SELECT * FROM
+(SELECT * FROM
+(SELECT * FROM species INNER JOIN (SELECT * FROM subBiomesMapping WHERE Sub_biome_ID = 1 AND Canopy = 1) as table1 ON species.Tree_ID = table1.Tree_ID) as spectable
+INNER JOIN sunTolUpper ON sunTolUpper.sun_tol_upper = spectable.sun_tol_upper) as spectable2
+INNER JOIN shadeTolLow ON shadeTolLow.shade_tol_lower = spectable2.shade_tol_lower) as spectable3
+INNER JOIN floodTolUpper ON floodTolUpper.flood_tol_upper = spectable3.flood_tol_upper) as spectable4
+INNER JOIN droughtTolLow ON droughtTolLow.drought_tol_lower = spectable4.drought_tol_lower) as spectable5
+INNER JOIN slopeTolUpper ON slopeTolUpper.slope_tol_upper = spectable5.slope_tol_upper) as spectable6
+INNER JOIN coldTolLow ON coldTolLow.cold_tol_lower = spectable6.cold_tol_lower

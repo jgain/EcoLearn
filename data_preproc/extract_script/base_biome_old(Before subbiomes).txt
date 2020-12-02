@@ -1,0 +1,38 @@
+Mediterranean
+6
+Mediterranean_Needle-Leaved_Evergreen_Shade_Intolerant_Tree 0.173 0.290 0.055 0.1 0.07 0.0 0.0 SPHR
+-2.0 1.0 4.0 14.0 16.0 18.0 -10.0 20.0 50.0 120.0 140.0 160.0 -1.0 5.0 11.0 26.0 28.0 30.0 -1.0 -0.5 0.0 15.0 30.0 45.0
+-1.9 1.1 0.2
+Mediterranean_Temperate_Broad-Leaved_Summergreen_Shade_Tolerant_Tree 0.498 0.258 0.094 0.1 0.1 0.75 0.8 BOX
+-3.0 0.0 3.0 9.0 11.0 13.0 10.0 40.0 70.0 140.0 160.0 180.0 3.0 5.0 7.0 21.0 26.0 31.0 -1.0 -0.5 0.0 25.0 40.0 55.0
+-1.9 1.1 0.15
+Mediterranean_Temperate_Broad-Leaved_Summergreen_Shade_Intolerant_Tree 0.573 0.600 0.467 0.25 0.1 1.0 1.0 BOX
+-2.0 1.0 4.0 14.0 16.0 18.0 10.0 40.0 70.0 140.0 160.0 180.0 3.0 5.0 7.0 21.0 26.0 31.0 -1.0 -0.5 0.0 30.0 45.0 60.0
+-1.9 1.1 0.15
+Mediterranean_Temperate_Broad-Leaved_Evergreen_Shade_Tolerant_Tree 0.376 0.443 0.302 0.1 0.07 0.0 0.0 SPHR
+-1.0 0.0 1.0 9.0 11.0 13.0 10.0 40.0 70.0 140.0 160.0 180.0 -2.0 5.0 12.0 28.0 30.0 32.0 -1.0 -0.5 0.0 25.0 40.0 55.0
+-1.9 1.1 0.15
+Mediterranean_Broad-leaved_Evergreen_Shade_Tolerant_Shrub 0.164 0.164 0.09 0.15 0.1 0.0 0.0 CONE
+-2.0 1.0 4.0 14.0 16.0 18.0 -10.0 20.0 50.0 120.0 140.0 160.0 -5.0 5.0 15.0 30.0 30.0 30.0 -1.0 -0.5 0.0 15.0 30.0 45.0
+-1.9 1.1 0.15
+Mediterranean_Needle-leaved_Evergreen_Shade_Intermediate_Shrub 0.678 0.624 0.133 0.05 0.07 0.0 0.0 CONE
+-2.0 1.0 4.0 14.0 16.0 18.0 -10.0 20.0 50.0 120.0 140.0 160.0 -5.0 5.0 15.0 30.0 30.0 30.0 -1.0 -0.5 0.0 10.0 20.0 30.0
+-1.9 1.1 0.2
+16
+HardwoodForest
+ConiferForest
+MixedConifer-HardwoodForest
+RiparianForest
+Non-nativeForest
+ForestSliver
+Shrub
+RiparianShrub
+Herbaceous
+HerbaceousWetland
+AquaticVegetation
+SaltMarsh
+BarrrenandSparselyVegetated
+Agriculture
+Water
+Developed
+5.0 55.0 0.25 100.0 180.0 5000.0

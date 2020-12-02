@@ -1,0 +1,17 @@
+Tree ID PRIMARY,common name,scientific name,form,canopy,maxage,maxheight,alpha,shade tol lower FOREIGN,sun tol upper FOREIGN,drought tol lower FOREIGN,flood tol upper FOREIGN,cold tol lower FOREIGN,slope tol upper FOREIGN,Growth ID FOREIGN,Allometry ID FOREIGN,grow_m,grow_c1,grow_c2,base_col_red,base_col_green,base_col_blue,draw_height,draw_radius,draw_box1,draw_box2,draw_shape,Max trunk radius
+0,Redwood Sorrel,Oxalis oregano,Herb,,6,0.25,0.6,H,L,L,H,M,M,L,A,0.0,0,0.0,0.12,0.56,1.0,0.05,0.05,0.0,0.0,CONE,-1.0
+1,California Sagebrush,Artemesia californica,Shrub,,100,2.5,0.6,L,H,H,L,M,H,L,A,0.0,0,0.0,0.29,0.0,0.51,0.05,0.05,0.0,0.0,INVCONE,-1.0
+2,Chamise / Greasewood,Adenostoma fasciculatum,Shrub,,60,3.5,0.68,L,H,H,M,H,H,S,A,0.0,0,0.0,0.93,0.51,0.93,0.05,0.05,0.0,0.0,INVCONE,-1.0
+3,western swordfern,Polystichum munitum,Herb,,5,1.2,0.68,H,L,L,H,H,M,L,A,6.0,0,0.0,0.1,0.1,1.0,0.05,0.05,0.0,0.0,INVCONE,-1.0
+4,whiteleaf manzanita,Arctostaphylos manzanita,Shrub,,100,4.5,0.6,M,H,H,L,H,H,S,A,1.2,0,0.0,0.85,0.71,0.85,0.05,0.07,1.0,1.0,INVCONE,-1.0
+5,Toyon,Heteromeles arbutifolia,Shrub,,150,9.0,0.68,M,H,M,M,M,H,S,A,0.5,0,0.0,1.0,0.0,1.0,0.08,0.07,2.0,2.0,CONE,-1.0
+6,Pacific Poison Oak,Toxicodendron diversilobum,Shrub/Vine,,80,1.0,0.34,M,M,M,M,M,H,S,A,3.25,0,0.0,1.0,0.56,0.0,0.1,0.07,3.0,3.0,SPHR,-1.0
+7,Tanoak,Notholithocarpus densiflorus,Shrub/Tree,,300,45.0,0.35,M,H,M,H,L,M,L,A,1.0,0,3.385,0.0,1.0,0.0,0.1,0.07,4.0,4.0,SPHR,0.95
+8,California/Coast Live Oak,Quercus agrifolia,Shrub/Tree,Y,150,25.0,0.31,L,H,M,L,L,M,L,C,1.0,0,3.817,0.0,0.5,0.0,0.14,0.07,5.0,5.0,SPHR,0.6
+9,Oregon White Oak,Quercus garryana,Shrub/Tree,Y,300,35.0,0.3,L,H,H,M,H,M,S,C,1.0,0,3.817,0.0,0.98,0.6,0.05,0.07,7.0,7.0,SPHR,0.5
+10,California black oak,Quercus kelloggii,Shrub/Tree,Y,500,39.0,0.34,M,M,M,M,M,H,S,C,1.0,0,3.817,0.55,0.8,0.15,0.055,0.1,8.0,8.0,SPHR,0.7
+11,California Laurel,Umbellularia californica,Shrub/Tree,,250,30.0,0.36,H,M,L,H,H,H,L,B,1.0,0,3.385,0.78,0.78,0.0,0.05,0.1,1.0,0.9,BOX,0.4
+12,Pacific Madrone,Arbutus menziesii,Tree,Y,350,30.0,0.33,M,L,H,H,V,H,S,D,1.0,0,3.56,0.84,0.6,0.37,0.25,0.1,0.9,1.0,BOX,1.2
+13,Gray Pine / Foothills Pine,Pinus sabiniana,Tree,Y,250,45.0,0.43,M,H,H,L,V,H,S,B,1.75,0,1.151,0.18,0.31,0.31,0.25,0.1,1.0,1.0,CONE,0.8
+14,Franco Douglas-Fir,Pseudotsuga menziesii,Tree,Y,250,49.0,0.45,M,M,M,H,L,H,S,D,2.5,1,-0.241,0.55,0.27,0.07,0.173,0.29,1.0,1.0,CONE,1.0
+15,Redwood,Sequoia sempervirens,Tree,Y,800,110.0,0.45,M,H,L,H,L,H,S,D,2.5,1,-0.241,0.78,0.31,0.27,0.1,0.1,1.0,0.95,BOX,4.5

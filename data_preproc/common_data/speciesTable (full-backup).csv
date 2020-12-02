@@ -1,0 +1,21 @@
+key,common name,scientific name,form,canopy,maxage,maxheight,alpha,shade tol lower,sun tol upper,drought tol lower,flood tol upper,cold tol lower,slope tol upper,period,code
+0,western swordfern,Polystichum munitum,Herb,,5,1.2,0.68,H,L,L,L,H,M,L,A
+1,whiteleaf manzanita,Arctostaphylos manzanita,Shrub,,100,4.5,0.6,M,H,H,L,H,H,S,A 
+2,Toyon,Heteromeles arbutifolia,Shrub,,150,9,0.68,M,H,M,M,M,H,S,A
+3,Pacific Poison Oak,Toxicodendron diversilobum,Shrub/Vine,,20,4,0.34,M,M,M,M,M,H,S,A
+4,Tanoak,Notholithocarpus densiflorus,Shrub/Tree,,300,45,0.35,M,H,M,H,L,M,L,A
+5,California/Coast Live Oak,Quercus agrifolia,Shrub/Tree,Y,150,25,0.31,L,H,M,L,L,M,L,C 
+6,Canyon Live Oak,Quercus chrysolepis,Shrub/Tree,Y,250,30,0.31,H,H,H,M,V,H,L,A
+7,Oregon White Oak,Quercus garryana,Shrub/Tree,Y,300,35,0.3,L,H,H,M,H,M,S,C
+8,California black oak,Quercus kelloggii,Shrub/Tree,Y,500,39,0.34,M,M,M,M,M,H,S,C
+9,Interior Live Oak,Quercus wislizeni,Shrub/Tree,Y,300,15,0.34,M,H,M,M,M,M,L,A
+10,California Laurel,Umbellularia californica,Shrub/Tree,,250,30,0.36,H,M,L,M,H,H,L,B
+11,Pacific Madrone,Arbutus menziesii,Tree,Y,350,30,0.33,M,L,H,H,V,H,S,D
+12,Gray Pine / Foothills Pine,Pinus sabiniana,Tree,Y,250,45,0.43,M,H,H,L,V,H,S,B
+13,California White Oak / Valley Oak,Quercus lobata,Tree,Y,500,45,0.55,L,H,M,L,L,H,S,C
+14,Franco Douglas-Fir,Pseudotsuga menziesii,Tree ,Y,250,49,0.43,H,M,M,H,L,H,S,D
+15,Redwood,Sequoia sempervirens,Tree,Y,800,110,0.3,H,H,L,H,L,H,S,D
+16,Redwood Sorrel,Oxalis oregano,Herb,,,,,,,,,,,,
+17,California Sagebrush,Artemesia californica,Shrub,,,,,,,,,,,,
+18,Chamise / Greasewood,Adenostoma fasciculatum,Shrub,,,,,,,,,,,,
+,common name,scientific name,,,,,,,,,,,,,
