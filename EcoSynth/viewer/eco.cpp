@@ -932,8 +932,6 @@ void ShapeGrid::initGrid()
         }
     if (SYMBOLIC_RENDERER)
         genPlants();
-    else
-        genPlants("");
 }
 
 void ShapeGrid::genOpenglTextures()
@@ -941,58 +939,6 @@ void ShapeGrid::genOpenglTextures()
     for (int i = 0; i < shapes[0].size(); i++)
     {
         shapes[0][i].genOpenglTextures(10);		// starting ID will not really matter here
-    }
-}
-
-void ShapeGrid::genPlants(std::string model_filename)
-{
-    float trunkheight, trunkradius;
-    int x, y, s, f;
-    //model_importer model("../../Data/AcerSaccharum/AcerSaccharum_LOD4.obj",
-    //                         "../../Data/AcerSaccharum/");
-
-    std::string models_basedir = "/home/konrad/PhDStuff/models3d/AcerSaccharum/";
-    std::vector<std::string> models_files = {
-        "AcerSaccharum/AcerSaccharum_LOD4.obj",
-        //"QuercusRubraMature/QuercusRubraMature_LOD4.obj",
-        "WhiteAsh/WhiteAsh_LOD4.obj"
-        //"WhiteFirMature/WhiteFirMature_LOD4.obj"
-    };
-    //for (auto &fname :models_files)
-    //    fname = models_basedir + fname;
-
-    for(s = 0; s < biome->numPFTypes(); s++)
-    {
-        //model_importer model("/home/konrad/EcoSynth/Data/AcerSaccharum/AcerSaccharum_LOD4.obj");
-        model_importer model(models_basedir + models_files[s % models_files.size()]);
-
-        model.normalize_vertices_height();
-
-        Shape currshape;
-        PFType * pft = biome->getPFType(s);
-        currshape.setColour(pft->basecol);
-        trunkheight = pft->draw_hght; trunkradius = pft->draw_radius;
-        /*
-        switch(pft->shapetype)
-        {
-        case TreeShapeType::SPHR:
-            genSpherePlant(trunkheight, trunkradius, currshape);
-            break;
-        case TreeShapeType::BOX:
-            genBoxPlant(trunkheight, trunkradius, pft->draw_box1, pft->draw_box2, currshape);
-            break;
-        case TreeShapeType::CONE:
-            genConePlant(trunkheight, trunkradius, currshape);
-            break;
-        default:
-            break;
-        }
-        */
-        std::cerr << "Importing model to currshape for grid xy, biome: " << x << ", " << y << ", " << s << std::endl;
-        currshape.import_model(&model);
-        std::cerr << "Done importing model to currshape" << std::endl;
-        shapes[0][s] = currshape;
-        std::cerr << "Done assigning currshape to shapes[0][s]" << std::endl;
     }
 }
 

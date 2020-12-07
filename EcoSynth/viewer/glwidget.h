@@ -76,7 +76,6 @@ const float initmint = 0.0f;
 const float initmaxt = 40.0f;
 
 class SunWindow;
-class histcomp_window;
 class UndergrowthSpacer;
 class UndergrowthRefiner;
 
@@ -160,8 +159,6 @@ public:
     MapFloat * getCanopyDensityModel();
     Biome * getBiome();
     GLSun * getGLSun();
-
-    histcomp_window *get_histcomp() { return histcomp; }
 
     SunWindow *sunwindow;
 
@@ -351,11 +348,8 @@ protected:
 
     void init_csynth();
     void update_prettypaint(int x, int y, float radius);
-    void compute_sampleprob_map(const std::vector<basic_tree> &trees);
     void reset_common_maps();
 private:
-
-    std::ofstream ofs_timings;
 
     int underspace_count = 0;
 
@@ -384,11 +378,6 @@ private:
     float specperc = 0.5f;		// for the single-species drawing
     float specbrush_rad;
     float learnbrush_rad;
-
-    const float synth_cellsize = 80.0f;
-    histcomp_window *histcomp;
-    histcomp_window *canopyunder_comp;
-    histcomp_window *underunder_comp;
 
     std::unique_ptr<abiotic_maps_package> amaps_ptr;
 
@@ -468,9 +457,6 @@ private:
     std::string plant_sqldb_name;
     data_importer::common_data cdata;
 
-    std::string diffresults_filename = "/home/konrad/PhDStuff/mtxdiff.txt";
-    std::ofstream diffresults_ofs;
-
     std::vector<species> prev_species_vec;
     int nspecies;
     int assign_times;
@@ -489,7 +475,6 @@ private:
 
     ValueMap<int> species_assigned;
     ValueGridMap<float> canopyshading_temp;
-    ValueGridMap<float> sampleprob_map;
 
 
     std::vector<std::string> cluster_filenames;

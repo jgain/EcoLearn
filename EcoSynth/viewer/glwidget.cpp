@@ -166,10 +166,6 @@ std::vector<int> get_canopyspecs(std::string dbname)
 }
 
 
-static std::vector<int> all_canopyspecs = get_canopyspecs("/home/konrad/EcoSynth/ecodata/sonoma.db");
-
-static std::vector<int> include_canopyspecs = all_canopyspecs;
-
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
 #endif
@@ -233,9 +229,7 @@ Scene::~Scene()
 ////
 
 GLWidget::GLWidget(const QGLFormat& format, int scale_size, QWidget *parent)
-    : QGLWidget(format, parent), prj_src_dir(PRJ_SRC_DIR), db_pathname(prj_src_dir + "/ecodata/sonoma.db"), plant_sqldb_name(db_pathname), cdata(plant_sqldb_name),
-      diffresults_ofs(diffresults_filename),
-      ofs_timings("/home/konrad/PhDStuff/timings.txt"),
+    : QGLWidget(format, parent), prj_src_dir(PRJ_SRC_DIR), db_pathname(std::string(PRJ_SRC_DIR) + "/ecodata/sonoma.db"), plant_sqldb_name(db_pathname), cdata(plant_sqldb_name),
       scale_size(scale_size)
 {
     assign_times = 0;
@@ -256,15 +250,6 @@ GLWidget::GLWidget(const QGLFormat& format, int scale_size, QWidget *parent)
     addScene();
 
     currscene = 0;
-
-    histcomp = new histcomp_window(histcomp_window::CompType::SIZE);
-    histcomp->resize(1000, 500);
-
-    canopyunder_comp = new histcomp_window(histcomp_window::CompType::CANOPYUNDER);
-    canopyunder_comp->resize(1500, 800);
-
-    underunder_comp = new histcomp_window(histcomp_window::CompType::UNDERUNDER);
-    underunder_comp->resize(1500, 800);
 
     renderer = new PMrender::TRenderer(NULL, "../viewer/shaders/");
     palette = new BrushPalette(getTypeMap(TypeMapType::PAINT), 3, this);
@@ -311,8 +296,6 @@ GLWidget::GLWidget(const QGLFormat& format, int scale_size, QWidget *parent)
 
     glsun = new GLSun(format);
     ipc = new IPC();
-
-    cluster_filenames = {"/home/konrad/PhDStuff/clusters1024/S4500-4500-1024_distribs.clm"};
 
     ipc_received_raw = new MapFloat();
 
@@ -1051,7 +1034,7 @@ void GLWidget::loadScene(std::string dirprefix)
 
 //#ifndef PAINTCONTROL
     //if(getBiome()->read(bmefile))
-    if (getBiome()->read_dataimporter("/home/konrad/EcoSynth/data_preproc/common_data/sonoma.db"))
+    if (getBiome()->read_dataimporter(prj_src_dir + "/ecodata/sonoma.db"))
     {
         amaps_ptr = unique_ptr<abiotic_maps_package>(new abiotic_maps_package(base_dirname, abiotic_maps_package::suntype::LANDSCAPE_ONLY, abiotic_maps_package::aggr_type::AVERAGE));
 
@@ -1143,6 +1126,7 @@ void GLWidget::loadScene(std::string dirprefix)
     float tw, th;
     getTerrain()->getTerrainDim(tw, th);
 
+    setPlantsVisibility(true);
 }
 
 void GLWidget::reset_specassign_ptr()
@@ -1754,16 +1738,8 @@ void GLWidget::doCanopyPlacement()
 
         std::cout << "Min species, max species: " << minspec << ", " << maxspec << std::endl;
 
-        std::ofstream file;
-        file.open("/home/konrad/PhDStuff/canopyplacement.txt", std::ios::out | std::ios::app);
-
-        if (file.fail())
-            throw std::runtime_error("Cannot open canopy placement timing file");
-
         int gw, gh;
         getTerrain()->getGridDim(gw, gh);
-
-        file << gw << ", " << gh << ": ";
 
         auto bt = std::chrono::steady_clock::now().time_since_epoch();
 
@@ -1778,7 +1754,6 @@ void GLWidget::doCanopyPlacement()
         {
             signalUpdateProgress((static_cast<float>(i) / max_iters) * 100);
             spacer->iteration();
-            //spacer->save_rendered_texture("/home/konrad/Desktop/rendered_chm.txt");
         }
 
         auto et = std::chrono::steady_clock::now().time_since_epoch();
@@ -1808,8 +1783,6 @@ void GLWidget::doCanopyPlacement()
 
         placetime = std::chrono::duration_cast<std::chrono::milliseconds>(et - bt).count();
         std::cout << "Time to finish canopy placement (with duplicate checking): " << placetime << " ms" << std::endl;
-
-        file << canopytrees.size() << ", " << placetime << std::endl;
 
         // FIXME: canopy_placer::convert_trees_species needs to check if we already have indices or real species ids
         spacer->convert_trees_species(canopy_placer::spec_convert::TO_ID);
@@ -1887,8 +1860,6 @@ void GLWidget::doSpeciesAssignment()
             *iter = specidxes.at(*iter);
         }
     }
-
-    data_importer::write_txt<ValueMap<int>>("/home/konrad/specassign_drawn.txt", &species_assigned);
 
 
     // FIXME: See FIXME in GLWidget::mouseReleaseEvent, at the statement similar to the one below
@@ -2016,45 +1987,54 @@ void GLWidget::doFastUndergrowthSampling()
 {
     canopycalc.lock();
 
-    signalUndergrowthSampleStart();
+    if (undersynth_init)
+    {
+        signalUndergrowthSampleStart();
 
-    auto progresssignal = [this](int val) {signalUpdateProgress(val); };
+        auto progresssignal = [this](int val) {signalUpdateProgress(val); };
 
-    undersynth->set_progress_callback(progresssignal);
+        undersynth->set_progress_callback(progresssignal);
 
-    auto bt = std::chrono::steady_clock::now().time_since_epoch();
+        auto bt = std::chrono::steady_clock::now().time_since_epoch();
 
-    if (!gpusample)
-        underplants = undersynth->sample_undergrowth();
+        if (!gpusample)
+            underplants = undersynth->sample_undergrowth();
+        else
+        {
+            bool convert_back = false;
+            if (canopytrees_indices)
+            {
+                convert_back = true;
+                convert_canopytrees_to_real_species();
+            }
+            underplants = undersynth->sample_undergrowth_gpu(canopytrees);
+            for (auto &up : underplants)
+                up.radius = cdata.modelsamplers.at(up.species).sample_rh_ratio(up.height) * up.height;
+            if (convert_back)
+                convert_canopytrees_to_indices();
+        }
+
+        auto et = std::chrono::steady_clock::now().time_since_epoch();
+
+        std::cout << "Redrawing plants..." << std::endl;
+        redrawPlants(false, layerspec::ALL, clearplants::YES);	// undergrowth plants get placed into the EcoSystem object here, so that it can be rendered in the interface
+
+        // repaint again, since we now also have the undergrowth plants
+        signalRepaintAllFromThread();
+
+        int time = std::chrono::duration_cast<std::chrono::milliseconds>(et - bt).count();
+        std::cout << "Time taken for undergrowth sampling: " << time << " ms" << std::endl;
+
+        std::string initsample_filename = pipeout_dirname + "/initundergrowth_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".pdb";
+        data_importer::write_pdb(initsample_filename, underplants.data(), underplants.data() + underplants.size());
+    }
     else
     {
-        bool convert_back = false;
-        if (canopytrees_indices)
-        {
-            convert_back = true;
-            convert_canopytrees_to_real_species();
-        }
-        underplants = undersynth->sample_undergrowth_gpu(canopytrees);
-        for (auto &up : underplants)
-            up.radius = cdata.modelsamplers.at(up.species).sample_rh_ratio(up.height) * up.height;
-        if (convert_back)
-            convert_canopytrees_to_indices();
+        std::cout << "Undersynth object not initialized. Cannot do undergrowth sampling. " << std::endl;
+        QMessageBox errdialog(this);
+        errdialog.setText("Undersynth object not initialized. Cannot do undergrowth sampling.\nDid you import a clusterfile already?");
+        errdialog.exec();
     }
-
-    auto et = std::chrono::steady_clock::now().time_since_epoch();
-
-    std::cout << "Redrawing plants..." << std::endl;
-    redrawPlants(false, layerspec::ALL, clearplants::YES);	// undergrowth plants get placed into the EcoSystem object here, so that it can be rendered in the interface
-
-    // repaint again, since we now also have the undergrowth plants
-    signalRepaintAllFromThread();
-
-    int time = std::chrono::duration_cast<std::chrono::milliseconds>(et - bt).count();
-    std::cout << "Time taken for undergrowth sampling: " << time << " ms" << std::endl;
-    ofs_timings << underplants.size() << " " << time << std::endl;
-
-    std::string initsample_filename = pipeout_dirname + "/initundergrowth_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".pdb";
-    data_importer::write_pdb(initsample_filename, underplants.data(), underplants.data() + underplants.size());
 
     canopycalc.unlock();
 }
@@ -2169,22 +2149,14 @@ void GLWidget::doCanopyPlacementAndSpeciesAssignment()
     }
     convert_canopytrees_to_indices();
 
-// if debug mode enabled, write sunlight to debug output
-#ifndef NDEBUG
-    data_importer::write_txt<ValueGridMap<float> >("/home/konrad/PhDStuff/data/canopysun_quick.txt", &canopyshading_temp);
-    data_importer::write_txt<MapFloat>("/home/konrad/PhDStuff/data/average_landsun.txt", getSim()->get_average_landsun_map());
-#endif // NDEBUG
 
-    /*
-     * this is for grawing grass, setting pretty maps, etc. Switching this off for timing purposes
-
-    // calculate grass based on updated canopy and write to file
+    // calculate grass based on updated canopy and write to file. Due to writes to the hard drive, this could slow down the interface a bit, especially
+    // with very large files
     std::string grassfilename = pipeout_dirname + "/grass_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".txt";
     std::string litterfilename = pipeout_dirname + "/litterfall_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".txt";
     ngrassfiles++;
     // setting conditions is cheap - simply a pointer assignment, so we do it just in case...
     getGrass()->setConditions(getSim()->get_average_moisture_map(), getSim()->get_average_adaptsun_map(), getSim()->get_average_landsun_map(), getSim()->get_temperature_map());
-    //getGrass()->setConditions(getSim()->get_average_moisture_map(), getSim()->get_average_sunlight_map(), getSim()->get_average_landsun_map(), getSim()->get_temperature_map());
     std::cout << "Growing grass..." << std::endl;
     getGrass()->grow(getTerrain(), canopytrees, cdata, scf);
     data_importer::write_txt<MapFloat>(grassfilename, getGrass()->get_data());
@@ -2195,15 +2167,12 @@ void GLWidget::doCanopyPlacementAndSpeciesAssignment()
     loadTypeMap(&pretty_map_painted, TypeMapType::PRETTY_PAINTED);
     loadTypeMap(&pretty_map, TypeMapType::PRETTY);
 
-    */
 
     auto et = std::chrono::steady_clock::now().time_since_epoch();
 
     int time = std::chrono::duration_cast<std::chrono::milliseconds>(et - bt).count();
 
     std::cout << "Time taken for canopy placement and species assignment: " << time << std::endl;
-
-    ofs_timings << canopytrees.size() << " " << time << " ";
 
     //doFastUndergrowthSampling();
     report_cudamem("Memory in use after canopy placement and species assignment function: ");
@@ -2266,7 +2235,6 @@ void GLWidget::calc_fast_canopyshading()
     //smooth_uniform_radial(15, adaptsun->data(), adaptsun->data(), dx2, dy2);
     memcpy(canopyshading_temp.data(), adaptsun->data(), sizeof(float) * dx2 * dy2);
 
-    //data_importer::write_txt<ValueGridMap<float> > ("/home/konrad/shadingtest.txt", &canopyshading_temp);
 }
 
 void GLWidget::compare_sizedistribs(int cluster, int spec)
@@ -2299,31 +2267,16 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_A) // 'A' for animated spin around center point of terrain
     {
-        /*
         // change focal point to center
-        // getTerrain()->setMidFocus();
-        // getView()->setForcedFocus(getTerrain()->getFocus());
+        getTerrain()->setMidFocus();
+        getView()->setForcedFocus(getTerrain()->getFocus());
         getView()->startSpin();
         rtimer->start(20);
-        */
+
+        /*
         getView()->modLocation(-movespeed, 0.0f, 0.0f);
         update();
-    }
-    if (event->key() == Qt::Key_Plus)
-    {
-        if (event->modifiers() == Qt::KeypadModifier)
-        {
-            movespeed += 1.0f;
-        }
-    }
-    if (event->key() == Qt::Key_Minus)
-    {
-        if (event->modifiers() == Qt::KeypadModifier)
-        {
-            movespeed -= 1.0f;
-            if (movespeed < 0.0f)
-                movespeed = 0.0f;
-        }
+        */
     }
 
     if(event->key() == Qt::Key_B) // 'B' to send and receive message via interprocess communication
@@ -2339,7 +2292,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         ipc->receive(getCanopyHeightModel(), scale_down);
 
 
-        data_importer::write_txt("/home/konrad/pipeline_chm_out_B.txt", getCanopyHeightModel());
         //getTypeMap(TypeMapType::CHM)->convert(getCanopyHeightModel(), TypeMapType::CHM, mtoft*initmaxt);
         getTypeMap(TypeMapType::CHM)->convert(getCanopyHeightModel(), TypeMapType::CHM, 65535);
         renderer->updateTypeMapTexture(getTypeMap(getOverlay()));
@@ -2348,36 +2300,19 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     }
     if(event->key() == Qt::Key_C) // 'C' to show canopy height model texture overlay
     {
-        if (event->modifiers() == Qt::ShiftModifier)
-        {
-            //getTypeMap(TypeMapType::CHM)->saveToGreyscaleImage("/home/konrad/PhDStuff/key_c_chm_write.png", 250, true);
-            setOverlay(TypeMapType::CHM);
-            // refreshOverlay();
-            redrawPlants(true, layerspec::ALL, clearplants::YES);
-        }
-        else
-        {
-            getView()->modLocation(0.0, -movespeed, 0.0f);
-            update();
-        }
+        setOverlay(TypeMapType::CHM);
+        // refreshOverlay();
+        redrawPlants(true, layerspec::ALL, clearplants::YES);
     }
     if(event->key() == Qt::Key_D) // 'D' toggle between painting and viewing
     {
-        if (event->modifiers() == Qt::ShiftModifier)
-        {
-            cerr << "window height = " << this->height() << " window width = " << this->width() << endl;
+        cerr << "window height = " << this->height() << " window width = " << this->width() << endl;
 
-            // if(cmode == ControlMode::VIEW)
-            setMode(ControlMode::PAINTLEARN);
-            // else
-            //     setMode(ControlMode::VIEW);
-            //setOverlay(TypeMapType::CDM);
-        }
-        else
-        {
-            getView()->modLocation(movespeed, 0.0f, 0.0f);
-            update();
-        }
+        // if(cmode == ControlMode::VIEW)
+        setMode(ControlMode::PAINTLEARN);
+        // else
+        //     setMode(ControlMode::VIEW);
+        //setOverlay(TypeMapType::CDM);
     }
     if(event->key() == Qt::Key_E) // 'E' to remove all texture overlays
     {
@@ -2467,31 +2402,17 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     }
     if(event->key() == Qt::Key_S) // 'S' to show sunlight texture overlay
     {
-        if (event->modifiers() == Qt::ShiftModifier)
-        {
-            int gw, gh;
-            canopyshading_temp.getDim(gw, gh);
-            MapFloat *sun = new MapFloat;
-            sun->setDim(gw, gh);
+        int gw, gh;
+        canopyshading_temp.getDim(gw, gh);
+        MapFloat *sun = new MapFloat;
+        sun->setDim(gw, gh);
 
-            memcpy(sun->data(), canopyshading_temp.data(), sizeof(float) * gw * gh);
+        memcpy(sun->data(), canopyshading_temp.data(), sizeof(float) * gw * gh);
 
-            loadTypeMap(sun, TypeMapType::SUNLIGHT);
-            setOverlay(TypeMapType::SUNLIGHT);
+        loadTypeMap(sun, TypeMapType::SUNLIGHT);
+        setOverlay(TypeMapType::SUNLIGHT);
 
-            delete sun;
-        }
-        else if (event->modifiers() == Qt::ControlModifier)
-        {
-            MapFloat *sun = getSim()->get_adaptsun();
-            loadTypeMap(sun, TypeMapType::SUNLIGHT);
-            setOverlay(TypeMapType::SUNLIGHT);
-        }
-        else
-        {
-            getView()->modLocation(0.0f, 0.0f, movespeed);
-            update();
-        }
+        delete sun;
     }
     if(event->key() == Qt::Key_T) // 'T' to show slope texture overlay
     {
@@ -2512,20 +2433,12 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     }
     if(event->key() == Qt::Key_W) // 'W' to show water texture overlay
     {
-        if (event->modifiers() == Qt::ShiftModifier)
-        {
-            wet_mth++;
-            if(wet_mth >= 12)
-                wet_mth = 0;
-            //loadTypeMap(getMoisture(wet_mth), TypeMapType::WATER);
-            loadTypeMap(getSim()->get_average_moisture_map(), TypeMapType::WATER);
-            setOverlay(TypeMapType::WATER);
-        }
-        else
-        {
-            getView()->modLocation(0.0f, 0.0f, -movespeed);
-            update();
-        }
+        wet_mth++;
+        if(wet_mth >= 12)
+            wet_mth = 0;
+        //loadTypeMap(getMoisture(wet_mth), TypeMapType::WATER);
+        loadTypeMap(getSim()->get_average_moisture_map(), TypeMapType::WATER);
+        setOverlay(TypeMapType::WATER);
     }
     if (event->key() == Qt::Key_X)
     {
@@ -2543,11 +2456,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_0)
     {
         setOverlay(TypeMapType::CLUSTERDENSITY);
-    }
-    if (event->key() == Qt::Key_Space)
-    {
-        getView()->modLocation(0.0f, movespeed, 0.0f);
-        update();
     }
     if (cmode == ControlMode::VIEW)
     {
@@ -2928,14 +2836,6 @@ void GLWidget::send_drawing()
 
         std::thread thrd(&GLWidget::doCanopyPlacementAndSpeciesAssignment, this);
         thrd.detach();
-
-
-        //spacer->save_to_file("/home/konrad/gui_trees_out.pdb");
-
-        //setOverlay(TypeMapType::CHM);
-
-        //set_pretty_map();
-        //loadTypeMap(&pretty_map_painted, TypeMapType::PRETTY_PAINTED);
 
 }
 

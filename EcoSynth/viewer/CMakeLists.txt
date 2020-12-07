@@ -175,11 +175,9 @@
     message("CMAKE_CXX_FLAGS:")
     message("${CMAKE_CXX_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-    #set(basedir "/home/konrad/EcoLearn/Code/EcoSynth")
     set(basedir ${BASE_ALL_DIR}/EcoSynth)
     add_definitions(-DPRJ_SRC_DIR="${PROJECT_SOURCE_DIR}")
     #add_definitions(-DCC_GL_DEBUG_)	TODO: shouldnt be necessary to uncomment this. We have too many GL error messages and it slows the program down. Fix them?
-    #add_definitions(-DHEIGHTMAP_BASEDIR="/home/konrad/PhDStuff/data/heightmap_png_cuts/")
     add_definitions(-DSHADER_BASEDIR="${CANOPY_DIR}")
     add_definitions(-DSPHEREMODEL_BASEDIR="${CANOPY_DIR}")
     add_definitions(-DSRC_BASEDIR="${basedir}")

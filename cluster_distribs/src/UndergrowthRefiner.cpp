@@ -295,8 +295,6 @@ void UndergrowthRefiner::test_encode_decode()
 
 void UndergrowthRefiner::refine()
 {
-    //std::ofstream ofs("/home/konrad/diffs_compensate.txt");
-
     std::uniform_real_distribution<float> unif;
     std::default_random_engine gen;
 

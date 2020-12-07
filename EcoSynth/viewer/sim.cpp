@@ -631,8 +631,6 @@ void Simulation::calc_adaptsun(const std::vector<basic_tree> &trees, const data_
 
     auto alphamap = create_alphamap(trees, cdata, rw, rh);
 
-    //data_importer::write_txt<ValueGridMap<float> >("/home/konrad/alphamap.txt", &alphamap);
-
     for (int y = 0; y < dy; y++)
     {
         for (int x = 0; x < dx; x++)

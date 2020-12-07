@@ -189,7 +189,6 @@ public slots:
     void set_species_optim_label();
     void set_undersample_label();
     void set_underrefine_label();
-    void loadConfig();
     void loadConfig(std::string configfilename);
     void openScene(std::string dirName, bool import_cluster_dialog);
 protected:

@@ -59,9 +59,6 @@ namespace common_vars
     extern generic_rng unif_rng;
     extern unsigned float_round;
     extern unsigned double_round;
-    extern std::ofstream misc_outputfile1;
-    extern std::ofstream misc_outputfile2;
-    extern bool enable_output1, enable_output2;
 }
 
 class HistogramDistrib;

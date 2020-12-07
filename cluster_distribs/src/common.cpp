@@ -38,9 +38,6 @@ namespace common_vars
 {
     generic_rng unif_rng;
     unsigned float_round, double_round;
-    std::ofstream misc_outputfile1("/home/konrad/PhDStuff/output1.txt");
-    std::ofstream misc_outputfile2("/home/konrad/PhDStuff/output2.txt");
-    bool enable_output1 = false, enable_output2 = false;
 }
 
 bool common_funcs::read_pdb(std::string filename, std::map<int, std::vector<MinimalPlant> > &retvec)

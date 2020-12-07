@@ -1207,12 +1207,6 @@ bool HistogramDistrib::add_plantdist(const basic_tree &refplnt, const basic_tree
     common_types::decimal value = bins.at(binnum);
     std::cout << "";
     refcount++;
-    if (common_vars::enable_output1)
-    {
-        for (auto &v : bins)
-            common_vars::misc_outputfile1 << v << " ";
-        common_vars::misc_outputfile1 << std::endl;
-    }
 
     return true;
 }

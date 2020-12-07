@@ -814,7 +814,7 @@ Window::Window(int scale_size)
     perspectiveView->getRenderer()->setContourParams(numContours, contourWidth, contourIntensity);
     perspectiveView->getRenderer()->setRadianceScalingParams(radianceEnhance);
 
-    specwindow = new specselect_window("/home/konrad/EcoSynth/ecodata/sonoma.db", this);
+    specwindow = new specselect_window(std::string(PRJ_SRC_DIR) + "/ecodata/sonoma.db", this);
     specwindow->show();
 
     connect(perspectiveView, &GLWidget::signalDisableSpecSelect, specwindow, &specselect_window::disable);
@@ -950,7 +950,7 @@ void Window::openTerrain()
 
 void Window::importDrawing()
 {
-    QString pathname = QFileDialog::getOpenFileName(this, tr("Import drawing"), "/home/konrad/PhDStuff", "*.png");
+    QString pathname = QFileDialog::getOpenFileName(this, tr("Import drawing"), QString(), "*.png");
 
     if (!pathname.isEmpty())
     {
@@ -963,7 +963,7 @@ void Window::openScene()
 {
     // Ecosystem files are bundled in a directory, which the user specifies.
     QString dirName = QFileDialog::getExistingDirectory(this, tr("Open Landscape Scene"),
-                                                    "/home/konrad/PhDStuff",
+                                                    QString(),
                                                     QFileDialog::ShowDirsOnly
                                                     | QFileDialog::DontResolveSymlinks);
 
@@ -1009,19 +1009,6 @@ void Window::openScene(std::string dirName, bool import_cluster_dialog)
         repaintAllGL();
     }
 
-}
-
-void Window::loadConfig()
-{
-    configparams params;
-    params.scene_dirname = "/home/konrad/PhDStuff/abioticfixed/S2000-2256-256";
-    params.clusterdata_filenames = {"/home/konrad/PhDStuff/clusterdata/toSimulateRedwood3/S2000-2256-256-2_distribs.clm"};
-    params.canopy_filename = "/home/konrad/PhDStuff/abioticfixed/S2000-2256-256/S2000-2256-256/canopytrees_0_9.pdb";
-    //params.undergrowth_filename = "/home/konrad/PhDStuff/abioticfixed/S2000-2256-256/S2000-2256-256/canopytrees_0_9.pdb";
-    //params.ctrlmode = ControlMode::UNDERGROWTH_SPACING;
-    params.render_canopy = false;
-    params.render_undergrowth = true;
-    loadConfig(params);
 }
 
 void Window::loadConfig(std::string configfilename)
@@ -1462,7 +1449,7 @@ void Window::showImportCanopyshading()
 void Window::showImportClusterFiles()
 {
     //QStringList fname_list_temp = QFileDialog::getOpenFileNames(this, tr("Import cluster files"), scenedirname.c_str(), tr("*.clm"));
-    QStringList fname_list_temp = QFileDialog::getOpenFileNames(this, tr("Import cluster files"), "/home/konrad/PhDStuff/clusters1024", tr("*.clm"));
+    QStringList fname_list_temp = QFileDialog::getOpenFileNames(this, tr("Import cluster files"), QString(), tr("*.clm"));
 
     auto fname_list_qstr = fname_list_temp.toStdList();
     std::vector<std::string> fname_list;
