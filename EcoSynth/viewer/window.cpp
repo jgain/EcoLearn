@@ -480,7 +480,7 @@ QSize Window::sizeHint() const
     return QSize(1000, 800);
 }
 
-Window::Window()
+Window::Window(int scale_size)
 {
     mainWidget = new QWidget;
     mainLayout = new QGridLayout;
@@ -614,7 +614,7 @@ Window::Window()
     glFormat.setProfile( QGLFormat::CoreProfile );
     glFormat.setSampleBuffers( false );
 
-    perspectiveView = new GLWidget(glFormat);
+    perspectiveView = new GLWidget(glFormat, scale_size);
     getView().setForcedFocus(getTerrain().getFocus());
     getView().setViewScale(getTerrain().longEdgeDist());
 

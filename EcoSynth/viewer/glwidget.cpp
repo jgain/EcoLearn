@@ -154,8 +154,6 @@ using namespace std;
 static int nspacingsteps = 1;	// to illustrate the difference between different numbers of iterations for the canopy placement.
                                 // Add a GUI control for this later?
 
-static int scaledsize = 256;
-
 std::vector<int> get_canopyspecs(std::string dbname)
 {
     data_importer::common_data cdata(dbname);
@@ -234,10 +232,11 @@ Scene::~Scene()
 // GLWidget
 ////
 
-GLWidget::GLWidget(const QGLFormat& format, QWidget *parent)
+GLWidget::GLWidget(const QGLFormat& format, int scale_size, QWidget *parent)
     : QGLWidget(format, parent), prj_src_dir(PRJ_SRC_DIR), db_pathname(prj_src_dir + "/ecodata/sonoma.db"), plant_sqldb_name(db_pathname), cdata(plant_sqldb_name),
       diffresults_ofs(diffresults_filename),
-      ofs_timings("/home/konrad/PhDStuff/timings.txt")
+      ofs_timings("/home/konrad/PhDStuff/timings.txt"),
+      scale_size(scale_size)
 {
     assign_times = 0;
     qtWhite = QColor::fromCmykF(0.0, 0.0, 0.0, 0.0);
@@ -998,7 +997,7 @@ void GLWidget::loadScene(std::string dirprefix)
     getTerrain()->calcMeanHeight();
     getTerrain()->updateBuffers(renderer); // NB - set terrain width and height in renderer.
 
-    int scale_down = get_terscale_down(scaledsize);
+    int scale_down = get_terscale_down(scale_size);
 
     // match dimensions for empty overlay
     int dx, dy;
@@ -2334,7 +2333,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         //if(getOverlay() != TypeMapType::PAINT)
         //    setOverlay(TypeMapType::PAINT);
 
-        int scale_size = 256;
         int scale_down = get_terscale_down(scale_size);
 
         ipc->send(getTypeMap(TypeMapType::PAINT), getTerrain(), scale_down);
@@ -2847,8 +2845,6 @@ void GLWidget::correct_chm_scaling()
 
 void GLWidget::send_and_receive_nnet()
 {
-    int scale_size = scaledsize;
-
     Timer t;
     t.start();
 

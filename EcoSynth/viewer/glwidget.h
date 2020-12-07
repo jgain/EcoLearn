@@ -131,7 +131,7 @@ public:
 
 public:
 
-    GLWidget(const QGLFormat& format, QWidget *parent = 0);
+    GLWidget(const QGLFormat& format, int scale_size, QWidget *parent = 0);
     ~GLWidget();
 
     QSize minimumSizeHint() const;
@@ -391,6 +391,8 @@ private:
     histcomp_window *underunder_comp;
 
     std::unique_ptr<abiotic_maps_package> amaps_ptr;
+
+    int scale_size;
 
 
     // scene control

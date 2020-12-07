@@ -108,7 +108,7 @@ class Window : public QMainWindow
 private:
 
 public:
-    Window();
+    Window(int scale_size);
 
     ~Window(){ std::cerr << "Entering window dtor" << std::endl; delete mainWidget; delete perspectiveView; }
 
