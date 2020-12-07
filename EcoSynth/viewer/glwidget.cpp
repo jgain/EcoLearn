@@ -1267,24 +1267,45 @@ void GLWidget::reset_specassign_ptr()
 
 void GLWidget::saveScene(std::string dirprefix)
 {
-    throw not_implemented("GLWidget::saveScene not implemented");
-
     std::string terfile = dirprefix+".elv";
-    std::string pdbfile = dirprefix+".pdb";
-    std::string sunfile = dirprefix+"_sun.txt";
-    std::string wetfile = dirprefix+"_wet.txt";
-    std::string tmpfile = dirprefix+"_tmp.txt";
+    std::string canopyfile = dirprefix+"_canopy.pdb";
+    std::string undergrowthfile = dirprefix + "_undergrowth.pdb";
+    std::string grassfile = dirprefix + "_grass.txt";
+    std::string litfile = dirprefix + "_litterfall.txt";
 
     // load terrain
-    getTerrain()->saveElv(terfile);
+    //getTerrain()->saveElv(terfile);
 
     // save various overlays for illumination, moisture, and temperature
     // saveTypeMap(wetfile, TypeMapType::WATER);
     // saveTypeMap(sunfile, TypeMapType::SUNLIGHT);
     // saveTypeMap(tmpfile, TypeMapType::TEMPERATURE);
 
-    if(!getEcoSys()->saveNichePDB(pdbfile))
-        cerr << "Error GLWidget::saveScene: saving plane file " << pdbfile << " failed" << endl;
+    //if(!getEcoSys()->saveNichePDB(pdbfile))
+    //    cerr << "Error GLWidget::saveScene: saving plane file " << pdbfile << " failed" << endl;
+
+
+    getTerrain()->saveElv(terfile);
+    if (canopytrees.size() > 0)
+    {
+        data_importer::write_pdb(canopyfile, canopytrees.data(), canopytrees.data() + canopytrees.size());
+        data_importer::write_txt<MapFloat>(grassfile, getGrass()->get_data());
+        data_importer::write_txt<MapFloat>(litfile, getGrass()->get_litterfall_data());
+    }
+    if (underplants.size() > 0)
+        data_importer::write_pdb(undergrowthfile, underplants.data(), underplants.data() + underplants.size());
+
+    /*
+    std::string sunfile = dirprefix+"_sun.txt";
+    std::string wetfile = dirprefix+"_wet.txt";
+    std::string tmpfile = dirprefix+"_tmp.txt";
+    std::string slopefile = dirprefix+"_slope.txt";
+    data_importer::write_txt<ValueMap<float> >(sunfile, &canopyshading_temp);
+    data_importer::write_txt<MapFloat>(wetfile, getSim()->get_average_moisture_map());
+    data_importer::write_txt<MapFloat>(tmpfile, getTemperature());
+    data_importer::write_txt<MapFloat>(slopefile, getSlope());
+    */
+
 }
 
 void GLWidget::writePlants(std::string plantfile)
@@ -2144,8 +2165,7 @@ void GLWidget::doCanopyPlacementAndSpeciesAssignment()
     convert_canopytrees_to_indices();
 
 
-    // calculate grass based on updated canopy and write to file. Due to writes to the hard drive, this could slow down the interface a bit, especially
-    // with very large files
+    // calculate grass based on updated canopy
     std::string grassfilename = pipeout_dirname + "/grass_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".txt";
     std::string litterfilename = pipeout_dirname + "/litterfall_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".txt";
     ngrassfiles++;
@@ -2153,8 +2173,8 @@ void GLWidget::doCanopyPlacementAndSpeciesAssignment()
     getGrass()->setConditions(getSim()->get_average_moisture_map(), getSim()->get_average_adaptsun_map(), getSim()->get_average_landsun_map(), getSim()->get_temperature_map());
     std::cout << "Growing grass..." << std::endl;
     getGrass()->grow(getTerrain(), canopytrees, cdata, scf);
-    data_importer::write_txt<MapFloat>(grassfilename, getGrass()->get_data());
-    data_importer::write_txt<MapFloat>(litterfilename, getGrass()->get_litterfall_data());
+    //data_importer::write_txt<MapFloat>(grassfilename, getGrass()->get_data());
+    //data_importer::write_txt<MapFloat>(litterfilename, getGrass()->get_litterfall_data());
 
 
     set_pretty_map();		// resetting the entire pretty map might be a little slow. Find alternative?

@@ -610,6 +610,7 @@ void Terrain::saveElv(const uts::string &filename)
     {
         getGridDim(gx, gy);
         step = grid.step();
+        std::cout << "Step size: " << step << std::endl;
         outfile << gx << " " << gy << " " << step << " " << latitude << endl;
         for (int x = 0; x < gx; x++)
         {

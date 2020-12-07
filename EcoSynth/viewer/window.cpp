@@ -1052,14 +1052,10 @@ void Window::loadConfig(configparams params)
 
 void Window::saveScene()
 {
-    /*
     if(!scenedirname.empty()) // save directly if we already have a file name
         perspectiveView->saveScene(scenedirname);
     else
         saveAsScene();
-    */
-
-    throw std::runtime_error("Saving of scene not implemented");
 }
 
 void Window::saveAsScene()

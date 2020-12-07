@@ -519,6 +519,37 @@ namespace data_importer
         return retmap;
     }
 
+    template<typename T>
+    void write_elv(std::string filename, const T &data)
+    {
+        std::ofstream ofs(filename, std::ios_base::out | std::ios_base::trunc);
+
+        float step;
+        {
+            float rw, rh;
+            int gw, gh;
+            get_realdim(*data, rw, rh);
+            gw = data->width();
+            gh = data->height();
+            step = rw / gw;		// let's assume that the proportion is equal for width and height...add an assert for this...?
+        }
+
+        if (ofs.good())
+        {
+            ofs << data->width() << " " << data->height() << " " << step;
+            ofs << " " << 0.0f;		// add dummy value for latitude - only keeping it for compatibility
+            ofs << std::endl;
+            for (int y = 0; y < data->height(); y++)
+            {
+                for (int x = 0; x < data->width(); x++)
+                {
+                    ofs << data->get(x, y) << " ";
+                }
+                ofs << std::endl;
+            }
+        }
+    }
+
     inline void write_pdb(std::string filepath, const std::vector<output_tree> &trees)
     {
         using namespace std;
