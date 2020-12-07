@@ -134,16 +134,6 @@ public slots:
 
     void cleanup();
     // menu items
-    /*
-    void openEco();
-    void openState();
-    void open();
-    void saveState();
-    void saveGrass();
-    void exportPlants();
-    void exportFile();
-    void exportAs();
-    */
     void openScene();
     void openTerrain();
     void saveScene();
@@ -170,17 +160,13 @@ public slots:
     void changeSpeciesSliders(std::vector<QSlider *> other_sliders, QSlider *sender_slider);
     void changeAllSpeciesSliders(QSlider *sender_slider);
     void addSpecRadSlider(QVBoxLayout *layout, const QString &label, float startValue, int scale, float low, float high);
-    void showSpeciesCompareDialog();
     void showImportCanopy();
     void showImportUndergrowth();
     void showSpeciesColours();
     void showClusterCounts();
     void compareUnderUnderDialog();
-    void toSynthesisMode();
     void importDrawing();
     void showImportClusterFiles();
-    void toFirstPersonMode();
-    void toOverviewMode();
     void showImportCanopyshading();
     void toCanopyTreeAddMode();
     void toCanopyTreeRemoveMode();
@@ -249,18 +235,7 @@ private:
     QMenu *actionMenu;
     QMenu *cmodeMenu;
     QMenu *viewmodeMenu;
-    /*
-    QAction *newAct;
-    QAction *openAct;
-    QAction *openEcoAct;
-    QAction *openStateAct;
-    QAction *openSamplingAct;
-    QAction *saveStateAct;
-    QAction *saveGrassAct;
-    QAction *exportPlantsAct;
-    QAction *exportAct;
-    QAction *exportAsAct;
-    */
+
     QAction *openTerrainAct;
     QAction *openSceneAct;
     QAction *saveSceneAct;
@@ -268,7 +243,6 @@ private:
     QAction *savePaintAsAct;
     QAction *saveCHMAsAct;
     QAction *showRenderAct;
-    QAction *compareSpeciesAct;
 
     QAction *importCanopyAct;
     QAction *importUndergrowthAct;
@@ -277,14 +251,9 @@ private:
 
     QAction *sampleUndergrowthAct;
 
-    QAction *toUnderUnderCmodeAct;
     QAction *showClusterCountsAct;
-    QAction *compareUnderUnderDialogAct;
-    QAction *toCanopyTreeAddAct;
-    QAction *toCanopyTreeRemoveAct;
 
     QAction *toFirstPersonModeAct;
-    QAction *toOverviewModeAct;
 
     QAction *doUndergrowthSynthesisAct;
     QAction *doCompleteUndergrowthSynthesisAct;

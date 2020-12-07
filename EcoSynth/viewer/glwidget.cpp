@@ -584,12 +584,6 @@ void GLWidget::setMode(ControlMode mode)
             cmode = mode;
             setOverlay(TypeMapType::SPECIES);
             break;
-        case ControlMode::SIZEDISTRIB_INSPECT:
-        case ControlMode::UNDERUNDER_INSPECT:
-        case ControlMode::CANOPYUNDER_INSPECT:
-            cmode = mode;
-            setOverlay(TypeMapType::CLUSTER);
-            break;
         default:
             break;
     }
@@ -2474,26 +2468,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void GLWidget::toUnderUnderCmode()
-{
-    throw not_implemented("Undergrowth-undergrowth inspection not implemented (in GLWidget::toUnderUnderCmode)");
-
-    /*
-    setMode(ControlMode::UNDERUNDER_INSPECT);
-    clptr_temp->init_plants_for_synth(underplants);
-
-    bool prev_set = canopytrees_indices;
-    convert_canopytrees_to_real_species();
-    clptr_temp->init_canopy(canopytrees);	// XXX: this also reinitializes hashmaps and pointer arrays in clptr. Perhaps not necessary
-    if (prev_set)
-        convert_canopytrees_to_indices();
-
-    clptr_temp->deriveHistogramMatrices(normalize_method::COMPLETE, true);
-
-    clptr_temp->write_speciescounts_to_log(logfile_ofs);
-    */
-}
-
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
     float nx, ny;
@@ -2879,30 +2853,8 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
         }
     }
 
-    if (event->button() == Qt::LeftButton && cmode == ControlMode::SIZEDISTRIB_INSPECT)
-    {
-        throw not_implemented("Size distribution inspect not implemented (ControlMode::SIZEDISTRIB_INSPECT)");
-    }
-
-    if (event->button() == Qt::LeftButton && cmode == ControlMode::CANOPYUNDER_INSPECT)
-    {
-        throw not_implemented("Canopy-undergrowth distribution inspect not implemented (ControlMode::CANOPYUNDER_INSPECT)");
-    }
-
-    if (event->button() == Qt::LeftButton && cmode == ControlMode::UNDERUNDER_INSPECT)
-    {
-        throw not_implemented("Undergrowth-undergrowth distribution inspection not implemented (ControlMode::UNDERUNDER_INSPECT");
-    }
-
-    if (event->button() == Qt::LeftButton && cmode == ControlMode::UNDERGROWTH_SYNTH)
-    {
-        throw not_implemented("Undergrowth synthesis not implemented currently. Replace commented code below with new class's code");
-    }
-
     if (event->button() == Qt::LeftButton && cmode == ControlMode::PAINTSPECIES)
     {
-
-
         brush.finStroke();
 
         std::string brush_out = generate_outfilename("brush");

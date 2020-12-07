@@ -414,11 +414,6 @@ glm::mat4x4 View::getProjMtx()
                 maxdist = 100000.0f;
                 mindist = 50.0f;
                 break;
-            case (ViewMode::FIRSTPERSON):
-                mult = 0.5f;
-                maxdist = 45000.0f;
-                mindist = 0.5f;
-                break;
         }
 
         minx = -mult * ACTUAL_ASPECT;

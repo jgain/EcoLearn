@@ -100,12 +100,6 @@ bool ConfigReader::read()
                 params.ctrlmode = ControlMode::PAINTLEARN;
             else if (!strcmp(iter->value.GetString(), "PAINTSPECIES"))
                 params.ctrlmode = ControlMode::PAINTSPECIES;
-            else if (!strcmp(iter->value.GetString(), "UNDERGROWTH_SYNTH"))
-                params.ctrlmode = ControlMode::UNDERGROWTH_SYNTH;
-            else if (!strcmp(iter->value.GetString(), "CANOPYTREE_ADD"))
-                params.ctrlmode = ControlMode::CANOPYTREE_ADD;
-            else if (!strcmp(iter->value.GetString(), "CANOPYTREE_REMOVE"))
-                params.ctrlmode = ControlMode::CANOPYTREE_REMOVE;
             else
                 params.ctrlmode = ControlMode::VIEW;
         }

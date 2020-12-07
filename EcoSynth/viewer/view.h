@@ -67,7 +67,6 @@ enum class ViewState {
 };
 
 enum class ViewMode {
-    FIRSTPERSON,
     OVERVIEW,
     VMEND
 };

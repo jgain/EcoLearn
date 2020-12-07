@@ -56,15 +56,12 @@
 #include <common/debug_list.h>
 
 #include "view.h"
-// #include "grass.h"
 #include "sim.h"
 #include "ipc.h"
 #include "palette.h"
-//#include "canopy_placement/mosaic_spacing.h"
 #include "species_optim/species_assign_exp.h"
 #include "canopy_placement/canopy_placer.h"
 #include "ClusterMatrices.h"
-//#include "species_optim/species_optim.h"
 
 #define PAINTCONTROL
 
@@ -85,9 +82,6 @@ enum class ControlMode
     PAINTLEARN,  // painting for training
     PAINTSPECIES,	// painting species
     PAINTECO, // painting ecosystems
-    SIZEDISTRIB_INSPECT,	// for showing size distributions of picked cluster
-    CANOPYUNDER_INSPECT,
-    UNDERUNDER_INSPECT,
     UNDERGROWTH_SYNTH,
     CANOPYTREE_ADD,
     CANOPYTREE_REMOVE,
@@ -316,7 +310,6 @@ public slots:
     void compare_sizedistribs(int cluster, int spec);
     void compare_canopyunder(int cluster);
     void compare_underunder(int cluster);
-    void toUnderUnderCmode();
     std::map<int, int> get_species_clustercounts(int species);
     MapFloat *getSunlight();
     MapFloat *getMoisture();

@@ -1364,9 +1364,6 @@ void Window::createActions()
     showRenderAct->setStatusTip(tr("Hide/Show Rendering Options"));
     connect(showRenderAct, SIGNAL(triggered()), this, SLOT(showRenderOptions()));
 
-    compareSpeciesAct = new QAction(tr("Compare species..."), this);
-    connect(compareSpeciesAct, SIGNAL(triggered()), this, SLOT(showSpeciesCompareDialog()));
-
     importCanopyAct = new QAction(tr("Import canopy"), this);
     connect(importCanopyAct, SIGNAL(triggered()), this, SLOT(showImportCanopy()));
 
@@ -1382,26 +1379,11 @@ void Window::createActions()
     sampleUndergrowthAct = new QAction(tr("Sample undergrowth"), this);
     connect(sampleUndergrowthAct, SIGNAL(triggered()), perspectiveView, SLOT(doFastUndergrowthSampling()));
 
-    toUnderUnderCmodeAct = new QAction(tr("Undergrowth-undergrowth distrib check"), this);
-    connect(toUnderUnderCmodeAct, SIGNAL(triggered()), perspectiveView, SLOT(toUnderUnderCmode()));
-
     showClusterCountsAct = new QAction(tr("Show cluster counts for species..."), this);
     connect(showClusterCountsAct, SIGNAL(triggered()), this, SLOT(showClusterCounts()));
 
-    compareUnderUnderDialogAct = new QAction(tr("Show cluster distributions..."), this);
-    connect(compareUnderUnderDialogAct, SIGNAL(triggered()), this, SLOT(compareUnderUnderDialog()));
-
-    doUndergrowthSynthesisAct = new QAction(tr("Do undergrowth synthesis"), this);
-    connect(doUndergrowthSynthesisAct, SIGNAL(triggered()), this, SLOT(toSynthesisMode()));
-
     doCompleteUndergrowthSynthesisAct = new QAction(tr("Do complete undergrowth synthesis"), this);
     connect(doCompleteUndergrowthSynthesisAct, SIGNAL(triggered()), perspectiveView, SLOT(doUndergrowthSynthesisCallback()));
-
-    toCanopyTreeAddAct = new QAction(tr("Add canopytree mode"), this);
-    connect(toCanopyTreeAddAct, SIGNAL(triggered()), this, SLOT(toCanopyTreeAddMode()));
-
-    toCanopyTreeRemoveAct = new QAction(tr("Remove canopytree mode"), this);
-    connect(toCanopyTreeRemoveAct, SIGNAL(triggered()), this, SLOT(toCanopyTreeRemoveMode()));
 
     importDrawingAct = new QAction(tr("Import drawing..."), this);
     connect(importDrawingAct, SIGNAL(triggered()), this, SLOT(importDrawing()));
@@ -1409,31 +1391,11 @@ void Window::createActions()
     convertPaintingAct = new QAction(tr("Convert painting..."), this);
     connect(convertPaintingAct, SIGNAL(triggered()), this, SLOT(convertPainting()));
 
-    toFirstPersonModeAct = new QAction(tr("First person"), this);
-    connect(toFirstPersonModeAct, SIGNAL(triggered()), this, SLOT(toFirstPersonMode()));
-
-    toOverviewModeAct = new QAction(tr("Overview"), this);
-    connect(toOverviewModeAct, SIGNAL(triggered()), this, SLOT(toOverviewMode()));
-
     processDrawingAct = new QAction(tr("Process drawing"), this);
     connect(processDrawingAct, SIGNAL(triggered()), perspectiveView, SLOT(send_drawing()));
 
     viewSpeciesColoursAct = new QAction(tr("Species colours"), this);
     connect(viewSpeciesColoursAct, SIGNAL(triggered()), this, SLOT(showSpeciesColours()));
-}
-
-void Window::toFirstPersonMode()
-{
-    perspectiveView->getView()->setMode(ViewMode::FIRSTPERSON);
-    perspectiveView->getView()->reset();
-    perspectiveView->update();
-}
-
-void Window::toOverviewMode()
-{
-    perspectiveView->getView()->setMode(ViewMode::OVERVIEW);
-    perspectiveView->getView()->reset();
-    perspectiveView->update();
 }
 
 void Window::showImportCanopyshading()
@@ -1559,11 +1521,6 @@ void Window::compareUnderUnderDialog()
     perspectiveView->compare_underunder(cluster);
 }
 
-void Window::toSynthesisMode()
-{
-    perspectiveView->setCtrlMode(ControlMode::UNDERGROWTH_SYNTH);
-}
-
 void Window::toCanopyTreeAddMode()
 {
     perspectiveView->setCtrlMode(ControlMode::CANOPYTREE_ADD);
@@ -1613,23 +1570,9 @@ void Window::showClusterCounts()
     }
 }
 
-void Window::showSpeciesCompareDialog()
-{
-    bool ok;
-    int cluster = QInputDialog::getInt(this, tr("Species size comparison"), tr("Cluster: "), 0, 0, 100, 1, &ok);
-    if (!ok)
-    {
-        return;
-    }
-    int spec = QInputDialog::getInt(this, tr("Species size comparison"), tr("Species to compare: "), 0, 0, 30, 1, &ok);
-    if (!ok)
-        return;
-    std::cout << "Cluster, species: " << cluster << ", " << spec << std::endl;
-    perspectiveView->compare_sizedistribs(cluster, spec);
-}
-
 void Window::createMenus()
 {
+    // File menu
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openTerrainAct);
     fileMenu->addAction(openSceneAct);
@@ -1637,14 +1580,13 @@ void Window::createMenus()
     fileMenu->addAction(saveSceneAsAct);
     fileMenu->addAction(savePaintAsAct);
     fileMenu->addAction(saveCHMAsAct);
-    // fileMenu->addAction(exportAct);
-    // fileMenu->addAction(exportAsAct);
 
+    // View menu
     viewMenu = menuBar()->addMenu(tr("&View"));
     viewMenu->addAction(showRenderAct);
-    viewMenu->addAction(compareSpeciesAct);
     viewMenu->addAction(viewSpeciesColoursAct);
 
+    // Import menu
     importMenu = menuBar()->addMenu(tr("&Import"));
     importMenu->addAction(importCanopyAct);
     importMenu->addAction(importUndergrowthAct);
@@ -1652,22 +1594,11 @@ void Window::createMenus()
     importMenu->addAction(importClusterfilesAct);
     importMenu->addAction(importCanopyshadingAct);
 
+    // Actions menu
     actionMenu = menuBar()->addMenu(tr("&Actions"));
     actionMenu->addAction(sampleUndergrowthAct);
     actionMenu->addAction(showClusterCountsAct);
-    actionMenu->addAction(compareUnderUnderDialogAct);
     actionMenu->addAction(convertPaintingAct);
     actionMenu->addAction(processDrawingAct);
     actionMenu->addAction(doCompleteUndergrowthSynthesisAct);
-
-
-    cmodeMenu = menuBar()->addMenu(tr("&Controlmode"));
-    cmodeMenu->addAction(toUnderUnderCmodeAct);
-    cmodeMenu->addAction(doUndergrowthSynthesisAct);
-    cmodeMenu->addAction(toCanopyTreeAddAct);
-    cmodeMenu->addAction(toCanopyTreeRemoveAct);
-
-    viewmodeMenu = menuBar()->addMenu(tr("&View mode"));
-    viewmodeMenu->addAction(toFirstPersonModeAct);
-    viewmodeMenu->addAction(toOverviewModeAct);
 }
