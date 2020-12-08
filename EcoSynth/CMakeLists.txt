@@ -31,10 +31,8 @@ find_package(PkgConfig REQUIRED)
 find_package(PythonInterp)
 find_package(OpenCL)
 find_package(GDAL)
-#find_package(LibSVM)
 find_package(Qt5Widgets 5.5 REQUIRED)
 find_package(Qt5OpenGL 5.5 REQUIRED)
-#find_package(ImageMagick COMPONENTS Magick++)
 find_package(OpenGL)
 find_package(GLUT)
 ## use dpkg -L libzmq3-dev to find library location
@@ -44,12 +42,6 @@ pkg_check_modules(GLEW glew)
 pkg_check_modules(OpenEXR REQUIRED OpenEXR)
 pkg_check_modules(Eigen REQUIRED eigen3)
 pkg_check_modules(ImageMagick REQUIRED Magick++)
-#pkg_check_modules(ZeroMQ REQUIRED zmq)
-
-### Installation specific. Will likely need to change these.
-#set(Boost_INCLUDE_DIRS "/usr/local/Cellar/boost/1.67.0_1/include")
-#set(Boost_LIB_DIRS "/usr/local/Cellar/boost/1.67.0_1/lib")
-#set(GLEW_INCLUDE_DIRS "/usr/local/Cellar/glew/2.1.0/include/GL")
 
 ### Set include and link directories and definitions
 include_directories(
