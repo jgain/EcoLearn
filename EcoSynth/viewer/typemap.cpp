@@ -627,10 +627,8 @@ void TypeMap::bandCHMMapEric(MapFloat * chm, float mint, float maxt)
 
 int TypeMap::load(const QImage &img, TypeMapType purpose)
 {
-    MemMap<mask_tag> mask;
     int tp, maxtp = 0; // mintp = 100;
     int width, height;
-    ifstream infile;
     float val, maxval = 0.0f, range;
 
     width = img.width();
@@ -762,7 +760,6 @@ int TypeMap::load(const QImage &img, TypeMapType purpose)
 
         }
     }
-    infile.close();
     // cerr << "maxtp = " << maxtp << endl;
     // cerr << "mintp = " << mintp << endl;
     return maxtp;

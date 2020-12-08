@@ -1,3 +1,25 @@
+// Authors: K.P. Kapp and J.E. Gain
+
+/*******************************************************************************
+ *
+ * EcoSynth - Data-driven Authoring of Large-Scale Ecosystems
+ * Copyright (C) 2020  K.P. Kapp  (konrad.p.kapp@gmail.com) and J.E. Gain (jgain@cs.uct.ac.za)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ ********************************************************************************/
+
 /****************************************************************************
 **
 ** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
@@ -143,8 +165,10 @@ public:
     EcoSystem * getEcoSys();
     Simulation * getSim();
     GrassSim * getGrass();
+    MapFloat * getSunlight();
     MapFloat * getSunlight(int month);
     MapFloat * getSlope();
+    MapFloat * getMoisture();
     MapFloat * getMoisture(int month);
     MapFloat * getTemperature();
     MapFloat * getCanopyHeightModel();
@@ -255,9 +279,14 @@ public:
     void doCanopyPlacementAndSpeciesAssignment();
     void doUndergrowthSynthesisPart(int startrow, int endrow, int startcol, int endcol);
     void doUndergrowthSynthesis();
+    void doFastUndergrowthSampling();
+    // send dense/sparse drawing to CGAN for evaluation
+    void send_drawing();
 
     // import canopy trees from pdb file at 'pathname'
     void read_pdb_canopy(std::string pathname);
+    // import undergrowth plants from pdb file at 'pathname'
+    void read_pdb_undergrowth(std::string pathname);
 
     /// check if a scene has been loaded
     bool hasSceneLoaded();
@@ -268,6 +297,82 @@ public:
     // update the pretty map based on grass, rocks, moisture on landscape
     void set_pretty_map();
 
+    // getter for backup canopy height model to be used for canopy placement object
+    basic_types::MapFloat *getPlacerCanopyHeightModel();
+
+    // @brief get_terscale_down Get the scaling factor for scaling landscape down to req_dim
+    // @param req_dim the required dimension to which the landscape should be scaled down to
+    int get_terscale_down(int req_dim);
+
+    // reinitialize species assignment pointer
+    void reset_specassign_ptr();
+
+    // @brief update_species_brushstroke Update painting for species assignment by applying brushstroke
+    // @param x location to apply brushstroke to
+    // @param y location to apply brushstroke to
+    // @param radius radius of brushstroke
+    // @param specie the species for which this brushtroke was applied
+    void update_species_brushstroke(int x, int y, float radius, int specie);
+
+    // @brief setSpecPerc Set the percentage that the currently selected species should satisfy in next species optimisation
+    // @param perc the percentage the species must satisfy
+    void setSpecPerc(float perc);
+
+    // @brief getSpecPerc Get the percentage that the currently selected species should satisfy in next species optimisation
+    float getSpecPerc();
+
+    // get and set brush radiuses for species and density painting
+    float getSpeciesBrushRadius();
+    void setSpeciesBrushRadius(float rad);
+    float getLearnBrushRadius();
+    void setLearnBrushRadius(float rad);
+
+    // register species 'id' as being added or removed from consideration for species assignment
+    void species_added(int id);
+    void species_removed(int id);
+
+    // set clustermap used in interface from clustermap computed by undergrowth sampler
+    // FIXME: this function will only work if undergrowth has already been sampled. It should
+    // 		  be refactored to also work if undergrowth has not been sampled
+    void set_clustermap();
+
+    // same as 'set_clustermap' function above, same FIXME also, but just for the cluster density
+    void set_clusterdensitymap();
+
+    // @brief loadTypeMap copy data from 'img' into a typemap
+    // @param img the image containing the data
+    // @param purpose the enum corresponding to the typemap which we will copy the data into
+    void loadTypeMap(const QImage &img, TypeMapType purpose);
+
+    // @brief import_drawing create a density drawing from data in a QImage
+    // @param img the image containing the draw data
+    void import_drawing(const QImage &img);
+
+    // @brief convert_painting convert brushtypes in the painting, e.g., convert all dense areas to sparse areas
+    // @param from brushtype from which to convert
+    // @param to brushtype to which to convert
+    void convert_painting(BrushType from, BrushType to);
+
+    // setter for cluster filenames
+    void set_clusterfilenames(std::vector<std::string> cluster_filenames);
+
+    // @brief import_canopyshading import canopy shading from a file
+    // @param canopyshading filename from which to import
+    void import_canopyshading(std::string canopyshading);
+
+    // @brief report_cudamem report how much GPU memory is in use by CUDA
+    // @param msg string that will comprise most of the displayed message, along with used memory
+    void report_cudamem(std::string msg) const;
+
+    // set visibility for all plants, canopy trees and undergrowth plants, respectively
+    void setPlantsVisibility(bool visible);
+    void setCanopyVisibility(bool visible);
+    void setUndergrowthVisibility(bool visible);
+
+    // update undergrowth synthesis object with canopyshading map held by interface
+    // XXX: only used by undergrowth sampling if it is done by CPU, not GPU.
+    // 		Is used by undergrowth refinement
+    void update_canopyshading_undersynth();
 
 signals:
     void signalRepaintAllGL();
@@ -299,41 +404,7 @@ public slots:
     // @param clearplants specify if plants should be cleared before redrawing
     void redrawPlants(bool repaint_here = true, ClusterMatrices::layerspec layer = ClusterMatrices::layerspec::ALL, clearplants clr = clearplants::YES);
 
-    basic_types::MapFloat *getPlacerCanopyHeightModel();
-    //void doFastUndergrowthSynthesis();
-    int get_terscale_down(int req_dim);
-    void save_drawing_to_file();
-    void reset_specassign_ptr();
-    void update_species_brushstroke(int x, int y, float radius, int specie);
-    void setSpecPerc(float perc);
-    float getSpecPerc();
-    float getSpeciesBrushRadius();
-    void setSpeciesBrushRadius(float rad);
-    float getLearnBrushRadius();
-    void setLearnBrushRadius(float rad);
-    void species_added(int id);
-    void species_removed(int id);
-    void set_clustermap();
-    void set_clusterdensitymap();
-    void doFastUndergrowthSampling();
-    void calcAndReportCanopyMtxDiff();
-    std::map<int, int> get_species_clustercounts(int species);
-    MapFloat *getSunlight();
-    MapFloat *getMoisture();
-    std::string generate_outfilename(std::string basename, int nunderpass = -1);
-    void report_cudamem(std::string msg) const;
-
-    void read_pdb_undergrowth(std::string pathname);
-    void loadTypeMap(const QImage &img, TypeMapType purpose);
-    void import_drawing(const QImage &img);
-    void convert_painting(BrushType from, BrushType to);
-    void set_clusterfilenames(std::vector<std::string> cluster_filenames);
-    void send_drawing();
-    void import_canopyshading(std::string canopyshading);
-    void setPlantsVisibility(bool visible);
-    void setCanopyVisibility(bool visible);
-    void setUndergrowthVisibility(bool visible);
-    void update_canopyshading_undersynth();
+    // launch thread which will do undergrowth refinement of existing sampled undergrowth plants
     void doUndergrowthSynthesisCallback();
 protected:
     void initializeGL();
@@ -488,22 +559,11 @@ private:
     void floodSea(Terrain * ter, MapFloat * wet, float sealevel, float seaval);
 
     /**
-     * @brief fillBeach set all paint values to empty below a certain altitude to represent the beach
-     * @param ter       Terrain that provides altitudes
-     * @param paintmap  map holding different types of terrain
-     * @param beachlevel    beach altitude value
-     */
-
-    /**
      * @brief pickInfo  write information about a terrain cell to the console
      * @param x         x-coord on terrain grid
      * @param y         y-coord on terrain grid
      */
     void pickInfo(int x, int y);
-    /*
-    void fillBeach(Terrain * ter, TypeMap * paintmap, float beachlevel);
-    void fillWater(Terrain * ter, MapFloat * wet, TypeMap * paintmap, float waterval);
-    void fillRock(Terrain * ter, EcoSystem * ecs, TypeMap * paintmap, float slopeval);*/
 
     void genOpenglTexturesForTrees();
 

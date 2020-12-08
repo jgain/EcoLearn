@@ -1,3 +1,25 @@
+// Authors: K.P. Kapp and J.E. Gain
+
+/*******************************************************************************
+ *
+ * EcoSynth - Data-driven Authoring of Large-Scale Ecosystems
+ * Copyright (C) 2020  K.P. Kapp  (konrad.p.kapp@gmail.com) and J.E. Gain (jgain@cs.uct.ac.za)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ ********************************************************************************/
+
 /****************************************************************************
 **
 ** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
@@ -37,26 +59,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-/*******************************************************************************
- *
- * EcoSynth - Data-driven Authoring of Large-Scale Ecosystems
- * Copyright (C) 2020  K.P. Kapp  (konrad.p.kapp@gmail.com) and J.E. Gain (jgain@cs.uct.ac.za)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- ********************************************************************************/
 
 #include "glwidget.h"
 #include "eco.h"
@@ -352,11 +354,6 @@ QSize GLWidget::minimumSizeHint() const
 QSize GLWidget::sizeHint() const
 {
     return QSize(1000, 800);
-}
-
-int GLWidget::getnspecies()
-{
-    return nspecies;
 }
 
 void GLWidget::screenCapture(QImage * capImg, QSize capSize)
@@ -2040,11 +2037,6 @@ void GLWidget::doFastUndergrowthSampling()
     canopycalc.unlock();
 }
 
-void GLWidget::calcAndReportCanopyMtxDiff()
-{
-    throw not_implemented("GLWidget::calcAndReportCanopyMtxDiff not implemented");
-}
-
 
 void GLWidget::doUndergrowthSynthesisPart(int startrow, int endrow, int startcol, int endcol)
 {
@@ -2239,14 +2231,6 @@ void GLWidget::calc_fast_canopyshading()
     //smooth_uniform_radial(15, adaptsun->data(), adaptsun->data(), dx2, dy2);
     memcpy(canopyshading_temp.data(), adaptsun->data(), sizeof(float) * dx2 * dy2);
 
-}
-
-std::map<int, int> GLWidget::get_species_clustercounts(int species)
-{
-
-    throw not_implemented("GLWidget::get_species_clustercounts not implemented");
-
-    return std::map<int, int>();
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *event)
@@ -2580,16 +2564,6 @@ int GLWidget::get_terscale_down(int req_dim)
     return scale_down;
 }
 
-void GLWidget::save_drawing_to_file()
-{
-    TypeMap *tmap = getTypeMap(TypeMapType::PAINT);
-
-    std::string drawingfilename = pipeout_dirname + "/vegdensity_drawing_" + std::to_string(nspecassign) + "_" + std::to_string(ndrawingfiles) + ".png";
-
-    tmap->saveToPaintImage(drawingfilename);
-    ndrawingfiles++;
-}
-
 void GLWidget::write_chmfiles()
 {
     std::string chmout = pipeout_dirname + "/chm_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".txt";
@@ -2663,9 +2637,6 @@ void GLWidget::send_and_receive_nnet()
     std::cout << "Sending input to neural net..." << std::endl;
     ipc->send(getTypeMap(TypeMapType::PAINT), getTerrain(), scale_down);
 
-    std::cout << "Saving drawing to file..." << std::endl;
-    save_drawing_to_file();
-
     std::cout << "Waiting for response from neural net..." << std::endl;
     // wait to receive neural net outputs
     ipc->receive_only(ipc_received_raw);
@@ -2695,11 +2666,6 @@ void GLWidget::send_and_receive_nnet()
     t.stop();
     cerr << "Time for data send and receive " << t.peek() << endl;
 
-}
-
-std::string GLWidget::generate_outfilename(std::string basename, int nunderpass)
-{
-    return pipeout_dirname + "/" + basename +  "_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".pdb";
 }
 
 void GLWidget::send_drawing()
@@ -2771,9 +2737,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
     {
         brush.finStroke();
 
-        std::string brush_out = generate_outfilename("brush");
-
-        optimise_species_brushstroke(brush_out);
+        optimise_species_brushstroke("");
 
         nspecassign++;
     }
@@ -2796,8 +2760,6 @@ void GLWidget::optimise_species_brushstroke(std::string outfile)
     spec_idx = specassign_id_to_idx.at(specid);
     specassign_ptr->optimise_brushstroke(spec_idx, getSpecPerc(), outfile);
     specassign_ptr->clear_brushstroke_data();
-
-    specassign_ptr->write_species_drawing(spec_idx, generate_outfilename("specdrawing"));
 
     canopycalc.unlock();
 }
