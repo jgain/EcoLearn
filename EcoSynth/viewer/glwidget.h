@@ -279,9 +279,6 @@ public:
     void doCanopyPlacementAndSpeciesAssignment();
     void doUndergrowthSynthesisPart(int startrow, int endrow, int startcol, int endcol);
     void doUndergrowthSynthesis();
-    void doFastUndergrowthSampling();
-    // send dense/sparse drawing to CGAN for evaluation
-    void send_drawing();
 
     // import canopy trees from pdb file at 'pathname'
     void read_pdb_canopy(std::string pathname);
@@ -406,6 +403,12 @@ public slots:
 
     // launch thread which will do undergrowth refinement of existing sampled undergrowth plants
     void doUndergrowthSynthesisCallback();
+
+    void doFastUndergrowthSampling();
+
+    // send dense/sparse drawing to CGAN for evaluation
+    void send_drawing();
+
 protected:
     void initializeGL();
     void paintGL();

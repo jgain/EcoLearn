@@ -1208,9 +1208,6 @@ void Window::createActions()
     sampleUndergrowthAct = new QAction(tr("Sample undergrowth"), this);
     connect(sampleUndergrowthAct, SIGNAL(triggered()), perspectiveView, SLOT(doFastUndergrowthSampling()));
 
-    showClusterCountsAct = new QAction(tr("Show cluster counts for species..."), this);
-    connect(showClusterCountsAct, SIGNAL(triggered()), this, SLOT(showClusterCounts()));
-
     doCompleteUndergrowthSynthesisAct = new QAction(tr("Do complete undergrowth synthesis"), this);
     connect(doCompleteUndergrowthSynthesisAct, SIGNAL(triggered()), perspectiveView, SLOT(doUndergrowthSynthesisCallback()));
 
@@ -1365,19 +1362,6 @@ void Window::showSpeciesColours()
     specColoursWindow->display();
 }
 
-void Window::showClusterCounts()
-{
-    bool ok;
-    int species = QInputDialog::getInt(this, tr("Species count"), tr("Species: "), 1, 1, 16, 1, &ok);
-    if (!ok)
-        return;
-    auto counts = perspectiveView->get_species_clustercounts(species);
-    for (auto &clpair : counts)
-    {
-        std::cout << "Cluster " << clpair.first << ": " << clpair.second << std::endl;
-    }
-}
-
 void Window::createMenus()
 {
     // File menu
@@ -1403,7 +1387,6 @@ void Window::createMenus()
     // Actions menu
     actionMenu = menuBar()->addMenu(tr("&Actions"));
     actionMenu->addAction(sampleUndergrowthAct);
-    actionMenu->addAction(showClusterCountsAct);
     actionMenu->addAction(convertPaintingAct);
     actionMenu->addAction(processDrawingAct);
     actionMenu->addAction(doCompleteUndergrowthSynthesisAct);

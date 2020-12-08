@@ -163,7 +163,6 @@ public slots:
     void showImportCanopy();
     void showImportUndergrowth();
     void showSpeciesColours();
-    void showClusterCounts();
     void importDrawing();
     void showImportClusterFiles();
     void showImportCanopyshading();
