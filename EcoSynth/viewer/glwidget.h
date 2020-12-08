@@ -82,9 +82,7 @@ enum class ControlMode
     PAINTLEARN,  // painting for training
     PAINTSPECIES,	// painting species
     PAINTECO, // painting ecosystems
-    UNDERGROWTH_SYNTH,
-    CANOPYTREE_ADD,
-    CANOPYTREE_REMOVE,
+    UNDERGROWTH_SYNTH,	// undergrowth synthesis
     CMEND
 };
 
@@ -251,16 +249,26 @@ public:
 
     void initCHM(int w, int h);
 
+    // methods for executing various parts of the pipeline
     void doCanopyPlacement();
     void doSpeciesAssignment();
     void doCanopyPlacementAndSpeciesAssignment();
-
     void doUndergrowthSynthesisPart(int startrow, int endrow, int startcol, int endcol);
     void doUndergrowthSynthesis();
 
-    int get_speciesid_from_index(int idx);
-    int get_index_from_speciesid(int id);
+    // import canopy trees from pdb file at 'pathname'
     void read_pdb_canopy(std::string pathname);
+
+    /// check if a scene has been loaded
+    bool hasSceneLoaded();
+
+    void grow_grass();
+    MapFloat *get_rocks();
+
+    // update the pretty map based on grass, rocks, moisture on landscape
+    void set_pretty_map();
+
+
 signals:
     void signalRepaintAllGL();
     void signalRepaintAllFromThread();
@@ -282,13 +290,15 @@ public slots:
     void animUpdate(); // animation step for change of focus
     void rotateUpdate(); // animation step for rotating around terrain center
 
-    void grow_grass();
-    MapFloat *get_rocks();
-    void set_pretty_map();
+    // set required percentages for each species based on the vector 'perc', where each element corresponds with a species
     void setSpeciesPercentages(const std::vector<float> &perc);
-    bool hasTrees();
+
+    // @brief redrawPlants redraw plants in interface.
+    // @param repaint_here if true, then update interface within this function call. If false, interface will be updated elsewhere, probably in next render loop iteration
+    // @param layer Specify layers to do the update on, either canopy, undergrowth, or both
+    // @param clearplants specify if plants should be cleared before redrawing
     void redrawPlants(bool repaint_here = true, ClusterMatrices::layerspec layer = ClusterMatrices::layerspec::ALL, clearplants clr = clearplants::YES);
-    int getnspecies();
+
     basic_types::MapFloat *getPlacerCanopyHeightModel();
     //void doFastUndergrowthSynthesis();
     int get_terscale_down(int req_dim);
@@ -307,15 +317,12 @@ public slots:
     void set_clusterdensitymap();
     void doFastUndergrowthSampling();
     void calcAndReportCanopyMtxDiff();
-    void compare_sizedistribs(int cluster, int spec);
-    void compare_canopyunder(int cluster);
-    void compare_underunder(int cluster);
     std::map<int, int> get_species_clustercounts(int species);
     MapFloat *getSunlight();
     MapFloat *getMoisture();
     std::string generate_outfilename(std::string basename, int nunderpass = -1);
     void report_cudamem(std::string msg) const;
-public slots:
+
     void read_pdb_undergrowth(std::string pathname);
     void loadTypeMap(const QImage &img, TypeMapType purpose);
     void import_drawing(const QImage &img);

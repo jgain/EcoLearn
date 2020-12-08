@@ -118,11 +118,9 @@ void Window::addSpecRadSlider(QVBoxLayout *layout, const QString &label,
                           float startValue, int scale, float low, float high)
 {
     const float defaultValue = startValue;
-    //const int defaultScaled = int(std::round(defaultValue * (float) scale) / perspectiveView->getView()->getScaleConst());
     const int defaultScaled = int(std::round(defaultValue * (float) scale));
 
     radlabel = new QLabel(label);
-    //layout->addWidget(radlabel);
     species_palette_window->add_widget(radlabel);
 
     specradslider = new QSlider(Qt::Horizontal);
@@ -137,11 +135,8 @@ void Window::addSpecRadSlider(QVBoxLayout *layout, const QString &label,
     connect(specradslider, &QSlider::valueChanged, [this, invScale] (int newValue)
             {
                 perspectiveView->setSpeciesBrushRadius(newValue * invScale);
-                //perspectiveView->setRadius(newValue * invScale);
-                //specradslider->setValue(perspectiveView->getRadius() / invScale);
                 repaintAllGL();
             });
-    //layout->addWidget(specradslider);
     species_palette_window->add_widget(specradslider);
 }
 
@@ -315,51 +310,6 @@ void Window::species_removed(int id)
     species_palette_window->disable_species(idx);
 }
 
-/*
-void Window::speciesSliderCallback()
-{
-        QSlider *sender_slider = (QSlider *)sender();
-
-        assert(sender());
-
-        int target;
-
-        int newsum = sender_slider->value();
-        for (int i = 0; i < speciesSliders.size(); i++)
-        {
-            auto sl = speciesSliders[i];
-            if (sl == sender_slider)
-            {
-                newsum = sl->value();
-                target = (i + 1) % speciesSliders.size();
-                break;
-            }
-        }
-
-        //int newsum = sender_slider->value();
-        for (auto &sl : speciesSliders)
-        {
-            if (sl != sender_slider)
-                newsum += sl->value();
-        }
-        int diff = 100 - newsum;
-
-        speciesSliders[target]->setValue(speciesSliders[target]->value() + diff);
-
-        std::vector<float> species_percentages;
-        for (auto &spsl : speciesSliders)
-        {
-            species_percentages.push_back(spsl->value() / 100.0f);
-        }
-
-        perspectiveView->setSpeciesPercentages(species_percentages);
-        if (perspectiveView->hasTrees())
-        {
-            perspectiveView->doSpeciesAssignment();
-            perspectiveView->redrawPlants();
-        }
-}
-*/
 
 void Window::changeSpeciesSliders(std::vector<QSlider *> other_sliders, QSlider *sender_slider)
 {
@@ -445,12 +395,6 @@ void Window::changeSpeciesSliders(std::vector<QSlider *> other_sliders, QSlider 
         }
 
         perspectiveView->setSpeciesPercentages(species_percentages);
-        if (perspectiveView->hasTrees())
-        {
-            perspectiveView->doSpeciesAssignment();
-            perspectiveView->redrawPlants();
-        }
-
 }
 
 void Window::changeAllSpeciesSliders(QSlider *sender_slider)
@@ -623,6 +567,8 @@ Window::Window(int scale_size)
 
     perspectiveView->getGLSun()->setScene(&getTerrain(), NULL, NULL);
 
+    std::cerr << "done" << std::endl;
+
     numGridX = 1.0f / gridSepX;
     numGridZ = 1.0f / gridSepZ;
 
@@ -633,12 +579,6 @@ Window::Window(int scale_size)
     specpalLayout->addWidget(perspectiveView->getSpeciesPalette());
 
     species_palette_window = new specpalette_window(this, specpal);
-
-    /*
-    species_palette_window = new QWidget(this, Qt::Window);
-    species_palette_window->show();
-    species_palette_window->setLayout(specpalLayout);
-    */
 
     progress_bar_window = new QWidget(this, Qt::Window);
 
@@ -678,13 +618,6 @@ Window::Window(int scale_size)
     undersynth_layout->addWidget(undersynth_progress);
     undersynth_layout->setSpacing(10);
 
-    /*
-    progress_layout->setSpacing(30);
-    progress_layout->addLayout(cplace_layout);
-    progress_layout->addLayout(qundergrowth_layout);
-    progress_layout->addLayout(undersynth_layout);
-    */
-
     currsynth_label = new QLabel("Canopy placement");
 
     synth_progress = new QProgressBar();
@@ -697,68 +630,6 @@ Window::Window(int scale_size)
     progress_bar_window->setLayout(progress_layout);
     progress_bar_window->show();
 
-    /*
-    auto speciesSliderCallback = [this] (){
-        QSlider *sender_slider = (QSlider *)sender();
-
-        assert(sender());
-
-        int newsum = 0;
-        for (auto &sl : speciesSliders)
-        {
-            if (sl == sender_slider)
-            {
-                newsum = sl->value();
-            }
-        }
-
-        //int newsum = sender_slider->value();
-        for (auto &sl : speciesSliders)
-        {
-            if (sl != sender_slider)
-                newsum += sl->value();
-        }
-        int diff = 100 - newsum;
-        int ndiv = speciesSliders.size() - 1;
-        int modulo = diff % ndiv;
-        int change = diff / ndiv;
-
-        for (int i = 0, c_idx = 0; i < speciesSliders.size(); i++)
-        {
-            if (sender_slider == speciesSliders[i])
-                continue;
-            if (c_idx < modulo)
-            {
-                speciesSliders[i]->setValue(speciesSliders[i]->value() + change + sign(modulo));
-            }
-            c_idx++;
-        }
-    };
-    */
-    //auto callback = std::bind(&Window::speciesSliderCallback, *this);
-    /*
-    for (int i = 0; i < perspectiveView->getnspecies(); i++)
-    {
-        addSpeciesSlider(palLayout, ("Species " + std::to_string(i + 1)).c_str(), 1.0f / perspectiveView->getnspecies(), 100, 0.0f, 1.0f);
-    }
-
-    // tree cutoff height values
-    QLabel * minTreeLabel = new QLabel(tr("Min Tree Height:"));
-    minTreeEdit = new QLineEdit;
-    minTreeEdit->setInputMask("00.0");
-    minTree = initmint;
-    minTreeEdit->setText(QString::number(minTree, 'g', 2));
-    palLayout->addWidget(minTreeLabel);
-    palLayout->addWidget(minTreeEdit);
-
-    QLabel * maxTreeLabel = new QLabel(tr("Max Tree Height:"));
-    maxTreeEdit = new QLineEdit;
-    maxTreeEdit->setInputMask("00.0");
-    maxTree = initmaxt;
-    maxTreeEdit->setText(QString::number(maxTree, 'g', 2));
-    palLayout->addWidget(maxTreeLabel);
-    palLayout->addWidget(maxTreeEdit);
-    */
 
     connect(perspectiveView, SIGNAL(signalCanopyPlacementStart()), this, SLOT(set_canopy_label()));
     connect(perspectiveView, SIGNAL(signalSpeciesOptimStart()), this, SLOT(set_species_optim_label()));
@@ -824,7 +695,7 @@ Window::Window(int scale_size)
 
     procdrawingButton->setEnabled(false);
 
-
+    std::cerr << "Window construction done" << std::endl;
     //connect(QApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 }
 
@@ -985,6 +856,7 @@ void Window::openScene(std::string dirName, bool import_cluster_dialog)
         sunwindow->repaint();
         sunwindow->hide();
 #endif
+        bool firstscene = !perspectiveView->hasSceneLoaded();
         perspectiveView->sunwindow = sunwindow;
         perspectiveView->loadScene(scenedirname);
         auto ter = perspectiveView->getTerrain();
@@ -994,12 +866,16 @@ void Window::openScene(std::string dirName, bool import_cluster_dialog)
 
         float startval = tm / 40.0f;
         float endval = tm / 4.0f;
+
         perspectiveView->setRadius((startval + endval) / 2.0f);
         perspectiveView->setLearnBrushRadius(perspectiveView->getRadius());
         perspectiveView->setSpeciesBrushRadius(perspectiveView->getRadius());
-        addLearnRadSlider(palLayout, tr("Active Brush Size"), perspectiveView->getRadius(), 1, tm / 40.0f, tm / 4.0f);
-        addSpecRadSlider(specpalLayout, tr("Active Brush Size"), perspectiveView->getRadius(), 1, tm / 40.0f, tm / 4.0f);
-        addPercSlider(specpalLayout, tr("Required species percentage"), 50);
+        if (firstscene)
+        {
+            addLearnRadSlider(palLayout, tr("Active Brush Size"), perspectiveView->getRadius(), 1, tm / 40.0f, tm / 4.0f);
+            addSpecRadSlider(specpalLayout, tr("Active Brush Size"), perspectiveView->getRadius(), 1, tm / 40.0f, tm / 4.0f);
+            addPercSlider(specpalLayout, tr("Required species percentage"), 50);
+        }
 
         if (import_cluster_dialog)
             showImportClusterFiles();
@@ -1053,13 +929,22 @@ void Window::loadConfig(configparams params)
 void Window::saveScene()
 {
     if(!scenedirname.empty()) // save directly if we already have a file name
+    {
         perspectiveView->saveScene(scenedirname);
+    }
     else
         saveAsScene();
 }
 
 void Window::saveAsScene()
 {
+    if (!perspectiveView->hasSceneLoaded())
+    {
+        QMessageBox mbox;
+        mbox.setText("Cannot save scene - no scene loaded yet");
+        mbox.exec();
+        return;
+    }
     QFileDialog::Options options;
     QString selectedFilter;
     // use file open dialog but convert to a directory
@@ -1126,52 +1011,6 @@ void Window::saveAsCHM()
     }
 
 }
-
-/*
-void Window::saveAsLearnPaint()
-{
-    QFileDialog::Options options;
-    QString selectedFilter;
-    QString paintfile = QFileDialog::getSaveFileName(this,
-                                    tr("Save learn PaintMap As"),
-                                    "~/",
-                                    tr("Image Files (*.png)"),
-                                    &selectedFilter,
-                                    options);
-    if (!paintfile.isEmpty())
-    {
-        std::string paintfilename = paintfile.toStdString();
-
-        if(endsWith(paintfilename, ".png"))
-            perspectiveView->writePaintMap(paintfilename);
-        else
-            cerr << "Error Window::saveAsPaint: file extension is incorrect, should be PNG" << endl;
-    }
-
-}
-*/
-
-/*
-void Window::exportPlants()
-{
-    QFileDialog::Options options;
-    QString selectedFilter;
-    QString statefilename = QFileDialog::getSaveFileName(this,
-                                    tr("Export Plants"),
-                                    "~/",
-                                    tr("Plant Files (*.pdp)"),
-                                    &selectedFilter,
-                                    options);
-    if (!statefilename.isEmpty())
-    {
-        std::string outfile = statefilename.toStdString();
-
-        if(endsWith(outfile, ".pdp"))
-            perspectiveView->writePlants(outfile);
-        else
-            cerr << "Error Window::exportPlants: file extension is incorrect" << endl;
-    }
-}*/
 
 void Window::showRenderOptions()
 {
@@ -1312,14 +1151,23 @@ void Window::createActions()
     openSceneAct->setStatusTip(tr("Open an ecosystem scene directory"));
     connect(openSceneAct, SIGNAL(triggered()), this, SLOT(openScene()));
 
+    /*
+     * // Removing import of only terrain, not scene. Will make interface more complicated.
+     * // Can be added at a later stage if necessary
     openTerrainAct = new QAction(tr("OpenTerrain"), this);
     openTerrainAct->setStatusTip(tr("Open an existing terrain file"));
     connect(openTerrainAct, SIGNAL(triggered()), this, SLOT(openTerrain()));
+    */
 
+    /*
+     * // Removing normal save without specifying directory, because it can accidentally overwrite
+     * // an existing scene easily. Safer to use "Save Scene as", which creates a new directory or overwrites
+     * // if explicitly specified
     saveSceneAct = new QAction(tr("&Save Scene"), this);
     saveSceneAct->setShortcuts(QKeySequence::Save);
     saveSceneAct->setStatusTip(tr("Save the ecosystem scene"));
     connect(saveSceneAct, SIGNAL(triggered()), this, SLOT(saveScene()));
+    */
 
     saveSceneAsAct = new QAction(tr("Save Scene as"), this);
     saveSceneAsAct->setStatusTip(tr("Save the ecosystem scene under a new name"));
@@ -1333,27 +1181,11 @@ void Window::createActions()
     saveCHMAsAct->setStatusTip(tr("Save the CHM under a new name"));
     connect(saveCHMAsAct, SIGNAL(triggered()), this, SLOT(saveAsCHM()));
 
-    /*
-    savePaintAsAct = new QAction(tr("Save LearnPaintMap as"), this);
-    savePaintAsAct->setStatusTip(tr("Save the learning paint map under a new name"));
-    connect(savePaintAsAct, SIGNAL(triggered()), this, SLOT(saveAsPaint()));
-    */
-
     showRenderAct = new QAction(tr("Show Render Options"), this);
     showRenderAct->setCheckable(true);
     showRenderAct->setChecked(false);
     showRenderAct->setStatusTip(tr("Hide/Show Rendering Options"));
     connect(showRenderAct, SIGNAL(triggered()), this, SLOT(showRenderOptions()));
-
-    /*
-    exportPlantsAct = new QAction(tr("Export Plants"), this);
-    exportPlantsAct->setStatusTip(tr("Export Plants"));
-    connect(exportPlantsAct, SIGNAL(triggered()), this, SLOT(exportPlants()));
-
-    saveGrassAct = new QAction(tr("Save Grass"), this);
-    saveGrassAct->setStatusTip(tr("Save grass layers"));
-    connect(saveGrassAct, SIGNAL(triggered()), this, SLOT(saveGrass()));
-    */
 
     showRenderAct = new QAction(tr("Show Render Options"), this);
     showRenderAct->setCheckable(true);
@@ -1507,27 +1339,6 @@ void Window::convertPainting()
     }
 }
 
-void Window::compareUnderUnderDialog()
-{
-    bool ok;
-    int cluster = QInputDialog::getInt(this, tr("Undergrowth-undergrowth comparison"), tr("Cluster: "), 0, 0, 100, 1, &ok);
-    if (!ok)
-    {
-        return;
-    }
-    perspectiveView->compare_underunder(cluster);
-}
-
-void Window::toCanopyTreeAddMode()
-{
-    perspectiveView->setCtrlMode(ControlMode::CANOPYTREE_ADD);
-}
-
-void Window::toCanopyTreeRemoveMode()
-{
-    perspectiveView->setCtrlMode(ControlMode::CANOPYTREE_REMOVE);
-}
-
 void Window::hide_all_ctrlwindows()
 {
 }
@@ -1571,9 +1382,7 @@ void Window::createMenus()
 {
     // File menu
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(openTerrainAct);
     fileMenu->addAction(openSceneAct);
-    fileMenu->addAction(saveSceneAct);
     fileMenu->addAction(saveSceneAsAct);
     fileMenu->addAction(savePaintAsAct);
     fileMenu->addAction(saveCHMAsAct);

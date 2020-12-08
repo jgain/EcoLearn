@@ -230,7 +230,7 @@ Scene::~Scene()
 
 GLWidget::GLWidget(const QGLFormat& format, int scale_size, QWidget *parent)
     : QGLWidget(format, parent), prj_src_dir(PRJ_SRC_DIR), db_pathname(std::string(PRJ_SRC_DIR) + "/ecodata/sonoma.db"), plant_sqldb_name(db_pathname), cdata(plant_sqldb_name),
-      scale_size(scale_size)
+      scale_size(scale_size), sceneloaded(false)
 {
     assign_times = 0;
     qtWhite = QColor::fromCmykF(0.0, 0.0, 0.0, 0.0);
@@ -304,6 +304,7 @@ GLWidget::GLWidget(const QGLFormat& format, int scale_size, QWidget *parent)
 
     genOpenglTexturesForTrees();
 
+    std::cerr << "GLWidget construction done" << std::endl;
 }
 
 void GLWidget::repaint()
@@ -588,12 +589,6 @@ void GLWidget::setMode(ControlMode mode)
             break;
     }
     update();
-}
-
-bool GLWidget::hasTrees()
-{
-    return false;
-    //return spacer != nullptr;
 }
 
 void GLWidget::convert_painting(BrushType from, BrushType to)
@@ -1267,6 +1262,8 @@ void GLWidget::reset_specassign_ptr()
 
 void GLWidget::saveScene(std::string dirprefix)
 {
+    if (!sceneloaded)
+        return;
     std::string terfile = dirprefix+".elv";
     std::string canopyfile = dirprefix+"_canopy.pdb";
     std::string undergrowthfile = dirprefix + "_undergrowth.pdb";
@@ -1846,6 +1843,11 @@ void GLWidget::read_pdb_canopy(std::string pathname)
     repaint();
 }
 
+bool GLWidget::hasSceneLoaded()
+{
+    return sceneloaded;
+}
+
 void GLWidget::read_pdb_undergrowth(std::string pathname)
 {
     underplants = data_importer::read_pdb(pathname);
@@ -1925,22 +1927,6 @@ void GLWidget::convert_canopytrees_to_indices()
             }
         }
     canopytrees_indices = true;
-}
-
-int GLWidget::get_speciesid_from_index(int idx)
-{
-    return specidxes.at(idx);
-}
-
-// TODO: create a std::map from species id to idx
-int GLWidget::get_index_from_speciesid(int id)
-{
-    for (int i = 0; i < specidxes.size(); i++)
-    {
-        if (specidxes.at(i) == id)
-            return i;
-    }
-    return -1;
 }
 
 void GLWidget::redrawPlants(bool repaint_here, layerspec layer, clearplants clr)
@@ -2144,8 +2130,16 @@ void GLWidget::doCanopyPlacementAndSpeciesAssignment()
     // calculate quick and dirty canopy shading, based on just reducing grass height under each
     // tree based on its alpha value, then smoothing
 
-    if (!gpusample)
-        calc_fast_canopyshading();
+    // The function calc_fast_canoyshading call below can be a bit slow on larger landscapes.
+    // Calculating canopyshading here is more for the sunlight texture overlay. If GPU sampling of
+    // undergrowth will be utilised, then sunlight shading will be calculated on the GPU anyway, for
+    // use by the undergrowth sampling algorithm. Uncomment the if statement below, "if (!gpusample)",
+    // to compute canopytree shading only if CPU sampling of undergrowth will be done.
+    // TODO: use the sunlight calculation function from gpusample.cu instead of this function for a fast
+    // computation of sunlight, taking into account tree shade.
+
+    //if (!gpusample)
+    calc_fast_canopyshading();
 
     convert_canopytrees_to_real_species();
     if (undersynth_init)
@@ -2173,9 +2167,6 @@ void GLWidget::doCanopyPlacementAndSpeciesAssignment()
     getGrass()->setConditions(getSim()->get_average_moisture_map(), getSim()->get_average_adaptsun_map(), getSim()->get_average_landsun_map(), getSim()->get_temperature_map());
     std::cout << "Growing grass..." << std::endl;
     getGrass()->grow(getTerrain(), canopytrees, cdata, scf);
-    //data_importer::write_txt<MapFloat>(grassfilename, getGrass()->get_data());
-    //data_importer::write_txt<MapFloat>(litterfilename, getGrass()->get_litterfall_data());
-
 
     set_pretty_map();		// resetting the entire pretty map might be a little slow. Find alternative?
     loadTypeMap(&pretty_map_painted, TypeMapType::PRETTY_PAINTED);
@@ -2188,7 +2179,6 @@ void GLWidget::doCanopyPlacementAndSpeciesAssignment()
 
     std::cout << "Time taken for canopy placement and species assignment: " << time << std::endl;
 
-    //doFastUndergrowthSampling();
     report_cudamem("Memory in use after canopy placement and species assignment function: ");
 
     std::cout << "Signalling repaint all from thread..." << std::endl;
@@ -2251,24 +2241,6 @@ void GLWidget::calc_fast_canopyshading()
 
 }
 
-void GLWidget::compare_sizedistribs(int cluster, int spec)
-{
-    throw not_implemented("GLWidget::compare_sizedistribs not implemented");
-    //clptr_temp->show_compare_sizedistribs(histcomp, cluster);
-}
-
-void GLWidget::compare_canopyunder(int cluster)
-{
-    throw not_implemented("GLWidget::compare_canopyunder not implemented");
-    //clptr_temp->show_compare_canopyundergrowth(canopyunder_comp, cluster);
-}
-
-void GLWidget::compare_underunder(int cluster)
-{
-    throw not_implemented("GLWidget::compare_underunder not implemented");
-    //clptr_temp->show_compare_underundergrowth(underunder_comp, cluster);
-}
-
 std::map<int, int> GLWidget::get_species_clustercounts(int species)
 {
 
@@ -2286,54 +2258,26 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         getView()->setForcedFocus(getTerrain()->getFocus());
         getView()->startSpin();
         rtimer->start(20);
-
-        /*
-        getView()->modLocation(-movespeed, 0.0f, 0.0f);
-        update();
-        */
     }
 
-    if(event->key() == Qt::Key_B) // 'B' to send and receive message via interprocess communication
-    {
-        Timer t;
-        t.start();
-        //if(getOverlay() != TypeMapType::PAINT)
-        //    setOverlay(TypeMapType::PAINT);
-
-        int scale_down = get_terscale_down(scale_size);
-
-        ipc->send(getTypeMap(TypeMapType::PAINT), getTerrain(), scale_down);
-        ipc->receive(getCanopyHeightModel(), scale_down);
-
-
-        //getTypeMap(TypeMapType::CHM)->convert(getCanopyHeightModel(), TypeMapType::CHM, mtoft*initmaxt);
-        getTypeMap(TypeMapType::CHM)->convert(getCanopyHeightModel(), TypeMapType::CHM, 65535);
-        renderer->updateTypeMapTexture(getTypeMap(getOverlay()));
-        t.stop();
-        cerr << "Time for data send and receive " << t.peek() << endl;
-    }
     if(event->key() == Qt::Key_C) // 'C' to show canopy height model texture overlay
     {
         setOverlay(TypeMapType::CHM);
-        // refreshOverlay();
         redrawPlants(true, layerspec::ALL, clearplants::YES);
     }
-    if(event->key() == Qt::Key_D) // 'D' toggle between painting and viewing
-    {
-        cerr << "window height = " << this->height() << " window width = " << this->width() << endl;
 
-        // if(cmode == ControlMode::VIEW)
-        setMode(ControlMode::PAINTLEARN);
-        // else
-        //     setMode(ControlMode::VIEW);
-        //setOverlay(TypeMapType::CDM);
+    if(event->key() == Qt::Key_D) // 'D' switch to painting overlay
+    {
+        setOverlay(TypeMapType::PAINT);
     }
+
     if(event->key() == Qt::Key_E) // 'E' to remove all texture overlays
     {
         cerr << "overlay changed to empty" << endl;
         setOverlay(TypeMapType::EMPTY);
         refreshOverlay();
     }
+
     if(event->key() == Qt::Key_F) // 'F' to toggle focus stick visibility
     {
         if(focusviz)
@@ -2342,12 +2286,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
             focusviz = true;
         update();
     }
-    if (event->key() == Qt::Key_G)  // currently empty
-    {
-    }
-    if (event->key() == Qt::Key_H)		// empty currently
-    {
-    }
+
     if(event->key() == Qt::Key_I) // 'I' for close ueval screencap
     {
         cerr << "image capture: close up" << endl;
@@ -2364,11 +2303,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     {
         loadTypeMap(getGrass()->get_data(), TypeMapType::GRASS);
         setOverlay(TypeMapType::GRASS);
-    }
-    if (event->key() == Qt::Key_K)
-    {
-        loadTypeMap(get_rocks(), TypeMapType::ROCKS);
-        setOverlay(TypeMapType::ROCKS);
     }
     if (event->key() == Qt::Key_L)
     {
@@ -2396,19 +2330,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
             focuschange = true;
         update();
     }
-    if(event->key() == Qt::Key_Q) // 'Q' unit test of mapsimcell
-    {
-        MapSimCell mapsim;
-        QImage * visimg = new QImage(500, 500, QImage::Format_ARGB32);
-        visimg->fill(qtWhite);
-        mapsim.unitTests(visimg);
-        // visimg->save(QCoreApplication::applicationDirPath() + "/../unittest.png");
-
-        // display image
-        vizpopup->setPixmap(QPixmap::fromImage((* visimg)));
-        vizpopup->show();
-        // delete visimg;
-    }
     if(event->key() == Qt::Key_R) // 'R' to show temperature texture overlay
     {
         loadTypeMap(getSlope(), TypeMapType::SLOPE);
@@ -2432,10 +2353,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     {
         loadTypeMap(getSim()->get_temperature_map(), TypeMapType::TEMPERATURE);
         setOverlay(TypeMapType::TEMPERATURE);
-    }
-    if(event->key() == Qt::Key_U) // 'U' to turn on usage texture
-    {
-        setOverlay(TypeMapType::CATEGORY);
     }
     if(event->key() == Qt::Key_V) // 'V' for top-down view
     {
@@ -2463,6 +2380,12 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         show_canopy = !show_canopy;
         redrawPlants();
     }
+
+    /*
+     * // Currently, showing the clusters and their densities on the landscape is not implemented, since we would
+     * // have to provide for both the GPU and CPU version.
+     * // TODO: refactor so that clusters are computed once, before synthesizing undergrowth, on the GPU so that it is
+     * // 		done fast, and also so that clusters are available to the interface without synthesizing undergrowth
     if (event->key() == Qt::Key_Z)
     {
         setOverlay(TypeMapType::CLUSTER);
@@ -2471,21 +2394,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     {
         setOverlay(TypeMapType::CLUSTERDENSITY);
     }
-    if (cmode == ControlMode::VIEW)
-    {
-        // '1'-'9' toggle visibility of corresponding plant group
-        // assuming at least 6 functional plant types
-        if(event->key() >= Qt::Key_1 && event->key() <= Qt::Key_9)
-        {
-            int p = (int) event->key() - (int) Qt::Key_1;
-            plantvis[p] = !plantvis[p];
-            getEcoSys()->redrawPlants();
-            update();
-        }
-    }
-    if (cmode == ControlMode::PAINTLEARN)
-    {
-    }
+    */
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
@@ -2656,9 +2565,6 @@ void GLWidget::pickInfo(int x, int y)
        cerr << "Elevation (m): " << getTerrain()->getHeight(x, y) << std::endl;
        cerr << "Canopy Height (m): " << getCanopyHeightModel()->get(x, y) * 0.3048f  << endl;
        cerr << "Canopy shading: " << canopyshading_temp.get(x, y) << endl;
-       //cerr << "Canopy Density: " << getCanopyDensityModel()->get(x, y) << endl;
-       //getBiome()->categoryNameLookup(getTypeMap(TypeMapType::CATEGORY)->get(x, y), catName);
-       //cerr << "Region Category: " << catName << endl << endl;
    }
 }
 
@@ -2846,18 +2752,6 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
         //send_drawing();
     }
 
-    if (event->button() == Qt::LeftButton && cmode == ControlMode::CANOPYTREE_ADD)
-    {
-        // see commented code below. This needs to be replaced with calls to new class
-        throw not_implemented("Canopytree add/remove not implemented");
-    }
-
-    if (event->button() == Qt::LeftButton && cmode == ControlMode::CANOPYTREE_REMOVE)
-    {
-        // see commented code below. This needs to be replaced with calls to new class
-        throw not_implemented("Canopytree add/remove not implemented");
-    }
-
     if(event->button() == Qt::LeftButton && cmode == ControlMode::VIEW) // info on terrain cell
     {
         vpPoint pnt;
@@ -2882,16 +2776,6 @@ void GLWidget::mouseReleaseEvent(QMouseEvent *event)
         optimise_species_brushstroke(brush_out);
 
         nspecassign++;
-
-        getTypeMap(TypeMapType::CHM)->convert(getCanopyHeightModel(), TypeMapType::CHM, 400);		// XXX: use loadTypeMap instead
-        renderer->updateTypeMapTexture(getTypeMap(getOverlay()));
-
-        std::thread thrd(&GLWidget::doCanopyPlacementAndSpeciesAssignment, this);
-        thrd.detach();
-
-
-        std::string outf = generate_outfilename("specassign");
-        data_importer::write_txt<ValueMap<int> >(outf, &species_assigned);
     }
 }
 

@@ -164,12 +164,9 @@ public slots:
     void showImportUndergrowth();
     void showSpeciesColours();
     void showClusterCounts();
-    void compareUnderUnderDialog();
     void importDrawing();
     void showImportClusterFiles();
     void showImportCanopyshading();
-    void toCanopyTreeAddMode();
-    void toCanopyTreeRemoveMode();
 
     void set_canopy_label();
     void set_species_optim_label();
