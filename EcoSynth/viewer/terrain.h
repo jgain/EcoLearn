@@ -336,7 +336,7 @@ public:
        * @param filename   File to save (simple ascii elevation format)
        * @see @ref MemMap for exception information
        */
-    void saveElv(const uts::string &filename);
+    void saveElv(const uts::string &filename, float unit);
 
     /// Recalculate the mean height over the terrain
     void calcMeanHeight();

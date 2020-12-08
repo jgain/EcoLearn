@@ -597,7 +597,7 @@ void Terrain::saveTer(const uts::string &filename)
     grid.write(filename);
 }
 
-void Terrain::saveElv(const uts::string &filename)
+void Terrain::saveElv(const uts::string &filename, float unit)
 {
     float step;
     int gx, gy;
@@ -616,8 +616,9 @@ void Terrain::saveElv(const uts::string &filename)
         {
             for (int y = 0; y < gy; y++)
             {
-                outfile << grid[x][y] << " ";
+                outfile << grid[x][y] / unit << " ";
             }
+            outfile << endl;
         }
         outfile << endl;
         outfile.close();

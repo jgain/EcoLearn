@@ -1285,7 +1285,7 @@ void GLWidget::saveScene(std::string dirprefix)
     //    cerr << "Error GLWidget::saveScene: saving plane file " << pdbfile << " failed" << endl;
 
 
-    getTerrain()->saveElv(terfile);
+    getTerrain()->saveElv(terfile, 0.3048);
     if (canopytrees.size() > 0)
     {
         data_importer::write_pdb(canopyfile, canopytrees.data(), canopytrees.data() + canopytrees.size());

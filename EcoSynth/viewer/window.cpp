@@ -1077,6 +1077,7 @@ void Window::saveAsScene()
         {
             dir.mkpath(".");
         }
+        scenedirname += "/" + dir.dirName().toStdString();
 
         saveScene();
     }
