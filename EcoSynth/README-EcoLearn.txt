@@ -1,24 +1,13 @@
-POSSIBLE SMALLER SUBSET OF INSTALLS:
-
-Boost, at least 1.49 (earlier versions don't play nice with C++11):
-sudo apt-get update
-sudo apt-get install libboost-all-dev
-
 
 UBUNTU INSTALLATION:
 --------------------
 These are requirements for Ubuntu. In each case, I've listed where to get the software 
 for Ubuntu 18.04. For newer versions of Ubuntu you might not need all the PPAs.
 
-CMake 2.8.7+, Eigen 3.x, make, automake 1.9, pkg-config, doxygen, GLUT, OpenEXR, GDAL:
+CMake 3.5+, Eigen 3.x, make, automake 1.9, pkg-config, doxygen, GLUT, OpenEXR:
 
-sudo apt-get install cmake libeigen3-dev make automake1.9 pkg-config doxygen freeglut3-dev libopenexr-dev openexr openexr-viewers exrtools libgdal1-dev libglm-dev
-
-GCC 4.8:
-
-sudo apt-add-repository ppa:ubuntu-toolchain-r/test
-sudo apt-get update
-sudo apt-get install g++-4.8
+sudo apt-get install cmake libeigen3-dev make automake pkg-config doxygen freeglut3-dev libopenexr-dev openexr openexr-viewers libgdal-dev libglm-dev
+(might need exrtools also, but this package has been deprecated it seems)
 
 Boost, at least 1.49 (earlier versions don't play nice with C++11):
 sudo apt-get update
@@ -37,7 +26,7 @@ sudo apt-get install qtbase5-dev
 
 ADDED PACKAGES:
 
-sudo apt-get install libgl1-mesa-dev qtcreator libglew-dev libqtcore4 libqtgui4 libqt4-opengl libqt4-opengl-dev //line used in 3rd year to fix opengl stuff 
+sudo apt install libgl1-mesa-dev libglew-dev
 sudo apt-get install build-essential
 sudo apt-get install libxmu-dev libxi-dev
 sudo apt-get install libcppunit-dev //added in to get testing framework
@@ -45,21 +34,24 @@ sudo apt-get install libcppunit-dev //added in to get testing framework
 ImageMagick:
 
 I couldn't find a PPA for this, and 6.8 is required. I downloaded the source,
-unpacked it, and run ./configure, make, make install. Note, that this needs to be ImageMagick version 6 and not a later version.
+unpacked it, and run ./configure, make, make install. Note, that this needs to be ImageMagick version 6 and not a later version:
+
+wget https://www.imagemagick.org/download/releases/ImageMagick-6.8.1-10.tar.xz
+tar -xf ImageMagick-6.8.1-10.tar.xz
+cd ImageMagick-6.8.1-10
+./configure
+make
+make install
 
 ADDITIONAL REQUIREMENTS:
-
-Modify the `basedir` variable in viewer/CMakeLists.txt to contain the location of this directory on your machine.
 
 packages/libraries:
 + SDL2		(install: sudo apt install libsdl2-dev)
 + Assimp	(install: sudo apt install libassimp-dev)
-+ CUDA 9+	(install: this can be complicated sometimes. Apparently you can install from the ubuntu repositories, but I think the recommended way is to download the installer from the NVIDIA website)
-+ OpenCV	(install: sudo apt install libopencv-dev)
-+ pthread, X11, libpng, libz (although I think the first two are usually installed by default)
++ CUDA 9 ONLY	(install: this can be complicated sometimes. Apparently you can install from the ubuntu repositories, but I think the recommended way is to download the installer from the NVIDIA website. The reason it must be version 9 is so that it can be compatible with Tensorflow 1.9, which we use with the modified pix2pix script required to be run for the neural net backend)
++ libpng 	(install: sudo apt install libpng-dev)
 
-The last requirement in the list (all 4 of them on the last line) is only because I used CImg to import the textures for the tree models. In the near future I will use the native Qt QImage class to import the textures instead, so this is a temporary requirement. The OpenCV requirement might also not be strictly necessary (but it is needed to compile), but might be used for some smoothing when doing canopy placement.
-
+Note that libpng version 1.6 is required (which is the default version in the ubuntu repositories, as of December 2020).
 
 Client-side git config
 ----------------------
