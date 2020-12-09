@@ -27,7 +27,6 @@
 #include "palette.h"
 #include "typemap.h"
 #include "vecpnt.h"
-#include "outimage.h"
 #include "grass.h"
 #include <stdio.h>
 #include <iostream>
@@ -1118,43 +1117,6 @@ void TypeMap::save(const uts::string &filename)
     }
 }
 
-void TypeMap::saveToBinaryImage(const uts::string &filename, int maskval)
-{
-    std::vector<float> mask;
-    int i = 0;
-
-    mask.resize(tmap->width()*tmap->height(), 0.0f);
-    for (int x = 0; x < tmap->width(); x++)
-        for (int y = 0; y < tmap->height(); y++)
-        {       
-            if((* tmap)[tmap->height()-y-1][x] == maskval)
-                mask[i] = 1.0f;
-            i++;
-        }
-
-    OutImage outimg;
-    outimg.write(filename, tmap->width(), tmap->height(), mask);
-}
-
-/*
-void TypeMap::saveToGreyscaleImage(const uts::string &filename, float maxrange)
-{
-    std::vector<float> mask;
-    int i = 0;
-
-    mask.resize(tmap->width()*tmap->height(), 0.0f);
-    for (int x = 0; x < tmap->width(); x++)
-        for (int y = 0; y < tmap->height(); y++)
-        {
-            mask[i] = (float) (* tmap)[tmap->height()-y-1][x] / maxrange;
-            i++;
-        }
-
-    std::cout << "Writing CHM output image as: " << filename << std::endl;
-    OutImage outimg;
-    outimg.write(filename, tmap->width(), tmap->height(), mask);
-}
-*/
 void TypeMap::saveToGreyscaleImage(const uts::string &filename, float maxrange, bool row_major)
 {
     std::vector<unsigned char> mask;

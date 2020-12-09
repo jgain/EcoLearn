@@ -1328,50 +1328,6 @@ void GLWidget::writeCanopyHeightModel(std::string chmfile)
     getTypeMap(TypeMapType::CHM)->saveToGreyscaleImage(chmfile, 250.0f, true);
 }
 
-void GLWidget::writeGrass(std::string grassrootfile)
-{
-    string filename, fileext;
-
-    int waterval = getTypeMap(TypeMapType::WATER)->getTopSample();
-    // int rockval = (int) BrushType::ROCK;
-
-    // output water layer as binary image 
-    fileext = "_water.png";
-    filename = grassrootfile + fileext;
-    cerr << filename << endl;
-    getTypeMap(TypeMapType::WATER)->saveToBinaryImage(filename, waterval);
-
-    // output rock layer as binary image
-    /*
-    fileext = "_rock.png";
-    filename = grassrootfile + fileext;
-    cerr << filename << endl;
-    getTypeMap(TypeMapType::PAINT)->saveToBinaryImage(filename, rockval);
-     */
-
-    // also sand layer??
-    /*
-    fileext = "_sand.png";
-    filename = tername + fileext;
-    cerr << filename << endl;
-    getTypeMap(TypeMapType::PAINT)->saveToImage(filename, rockval);*/
-
-    // output sun exposure as greyscale image
-    fileext = "_sun.png";
-    filename = grassrootfile + fileext;
-    cerr << filename << endl;
-    getTypeMap(TypeMapType::SUNLIGHT)->saveToGreyscaleImage(filename, 12.0f);
-
-    // output grass heights as greyscale image
-    fileext = "_grass.png";
-    filename = grassrootfile + fileext;
-    cerr << filename << endl;
-    setScene(0); // db does not have a grass layer
-    getGrass()->grow(getTerrain(), canopytrees, cdata, scf);
-    getGrass()->write(filename);
-
-}
-
 void GLWidget::addScene()
 {
     Scene * scene = new Scene();

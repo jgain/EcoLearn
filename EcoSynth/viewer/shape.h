@@ -29,8 +29,6 @@
 
 #include "view.h"
 
-#include "model_importer.h"
-
 struct ShapeDrawData
 {
     GLuint VAO;             // vertex array object id

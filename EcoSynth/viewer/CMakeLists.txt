@@ -102,7 +102,6 @@
        terrain.cpp
        shape.cpp
        typemap.cpp
-       outimage.cpp
        vecpnt.cpp
        view.cpp
        waterfill.cpp

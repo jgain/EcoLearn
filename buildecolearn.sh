@@ -4,5 +4,4 @@ rm -r build
 mkdir build
 rm CMakeCache.txt
 cd build
-cmake ../
 make

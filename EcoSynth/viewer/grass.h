@@ -169,13 +169,6 @@ public:
      */
     void setConditions(MapFloat * wetfile, MapFloat * sunfile, MapFloat *landsun_file, MapFloat * tempfile);
 
-    /**
-     * @brief write Write to a grascale PNG image
-     * @param filename  name of the file to write to
-     * @return      true if the write succeeded, false otherwise
-     */
-    bool write(std::string filename);
-
     MapFloat * get_data()
     {
         return &grasshght;

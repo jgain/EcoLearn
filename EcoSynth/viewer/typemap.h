@@ -319,13 +319,6 @@ public:
     void saveToPaintImage(const uts::string &filename);
 
     /**
-     * @brief saveToImage   Save map out as a binary mask
-     * @param filename      Name of file to save to
-     * @param maskval       Map value to select as white of mask
-     */
-    void saveToBinaryImage(const uts::string &filename, int maskval);
-
-    /**
      * @brief saveToImage   Save map out as a greyscale image
      * @param filename      Name of file to save to
      * @param maxrange      upper limit of values (mapped to 1.0 in image)

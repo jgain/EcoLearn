@@ -246,11 +246,6 @@ public:
      */
     void writePaintMap(std::string paintfile);
 
-    /**
-     * @brief writeGrass Output terragen image files related to the grass layer
-     * @param grassrootfile  name of root image file, all images use this as the prefix
-     */
-    void writeGrass(std::string grassrootfile);
     void writeCanopyHeightModel(std::string chmfile);
 
     /// Add an extra scene with placeholder view, terrain and typemap onto the end of the scene list

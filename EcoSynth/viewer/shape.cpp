@@ -46,62 +46,6 @@ void Shape::setColour(GLfloat * col)
     specular[3] = diffuse[3];
 }
 
-/*
-GLuint Shape::genOpenglTextures(GLuint startingID)
-{
-    modelTextures.resize(modelResources.get_teximages().size());
-    GLuint currID =  startingID;
-    for (int i = 0; i < modelResources.get_teximages().size(); i++)
-    {
-        auto &img = modelResources.get_teximages()[i];
-        std::vector<unsigned char> imgdata(img.width() * img.height() * img.spectrum());
-        //std::vector<unsigned char> imgdata(img.width() * img.height() * img.spectrum(), 255);
-        for (int y = 0; y < img.height(); y++)
-        {
-            for (int x = 0; x < img.width(); x++)
-            {
-                for (int channel = 0, arr_channel = 0; channel < img.spectrum(); channel++, arr_channel++)
-                {
-                    //imgdata[(y * img.width() + x) * img.spectrum() + arr_channel] = 0;
-                    imgdata[(y * img.width() + x) * img.spectrum() + arr_channel] = img(x, y, 0, channel);
-                    //imgdata[(y * img.width() + x) * img.spectrum() + arr_channel] = 255;
-                }
-            }
-        }
-        GLint internalFormat;
-        GLenum format;
-        if (img.spectrum() == 3)
-        {
-            internalFormat = GL_RGB;
-            format = GL_RGB;
-        }
-        else if (img.spectrum() == 4)
-        {
-            internalFormat = GL_RGBA;
-            format = GL_RGBA;
-        }
-        else
-        {
-            modelTextures[i] = 0;
-            continue;
-        }
-
-        std::string imgstr = "Image " + std::to_string(i);
-
-        glGenTextures(1, &modelTextures[i]);
-        glBindTexture(GL_TEXTURE_2D, modelTextures[i]);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, img.width(), img.height(), 0, format, GL_UNSIGNED_BYTE, imgdata.data());
-        glGenerateMipmap(GL_TEXTURE_2D);
-        currID++;
-    }
-}
-*/
-
 std::vector<GLuint> Shape::getModelTextures()
 {
     return modelTextures;

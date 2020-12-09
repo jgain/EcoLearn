@@ -19,7 +19,6 @@
  ********************************************************************************/
 
 #include "grass.h"
-#include "outimage.h"
 #include "dice_roller.h"
 #include "terrain.h"
 #include "eco.h"
@@ -443,27 +442,4 @@ void GrassSim::setConditions(MapFloat * wetfile, MapFloat * sunfile, MapFloat *l
     illumination = sunfile;
     temperature = tempfile;
     landsun = landsun_file;
-}
-
-bool GrassSim::write(std::string filename)
-{
-    // convert grass simulation to greyscale in [0,1] range
-    std::vector<float> normhght;
-    float h;
-    int gx, gy;
-
-    grasshght.getDim(gx, gy);
-
-    for(int x = 0; x < gx; x++)
-        for(int y = 0; y < gy; y++)
-        {
-            h = grasshght.get(x, gy-1-y) / MAXGRASSHGHT;
-            if(h > 1.0f)
-                h = 1.0f;
-            if(h < 0.0f)
-                h = 0.0f;
-            normhght.push_back(h);
-        }
-    OutImage outimg;
-    return outimg.write(filename, gx, gy, normhght);
 }
