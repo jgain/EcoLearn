@@ -934,14 +934,6 @@ void ShapeGrid::initGrid()
         genPlants();
 }
 
-void ShapeGrid::genOpenglTextures()
-{
-    for (int i = 0; i < shapes[0].size(); i++)
-    {
-        shapes[0][i].genOpenglTextures(10);		// starting ID will not really matter here
-    }
-}
-
 void ShapeGrid::genPlants()
 {
     float trunkheight, trunkradius;
@@ -1345,16 +1337,10 @@ void EcoSystem::clear()
 {
     esys = PlantGrid(pgdim, pgdim);
     eshapes = ShapeGrid(pgdim, pgdim, biome);
-    genOpenglTextures();
     for(int i = 0; i < (int) niches.size(); i++)
     {
         niches[i] = PlantGrid(pgdim, pgdim);
     }
-}
-
-void EcoSystem::genOpenglTextures()
-{
-    eshapes.genOpenglTextures();
 }
 
 bool EcoSystem::loadNichePDB(string filename, Terrain * ter, int niche)

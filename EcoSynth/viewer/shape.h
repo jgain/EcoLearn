@@ -59,7 +59,6 @@ private:
     int numInstances;
     std::vector<GLuint> modelTextures;
     std::vector<int> texidxes;	// indices for each vertex, indicating what texture it samples from
-    model_importer modelResources;
     bool brush = false;					// is this shape a brush?
 
     /**
@@ -107,8 +106,6 @@ public:
 
     /// setter for shape colour
     void setColour(GLfloat * col);
-
-    void import_model(model_importer *importer);
 
     /**
      * Create a cylinder originally lying along the positive z-axis and append to existing geometry

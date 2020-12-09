@@ -304,7 +304,7 @@ GLWidget::GLWidget(const QGLFormat& format, int scale_size, QWidget *parent)
     nspecies = 5;
     species_percentages = std::vector<float> (nspecies, 1.0f / nspecies);		// find a better way to initialize this!!
 
-    genOpenglTexturesForTrees();
+    //genOpenglTexturesForTrees();
 
     std::cerr << "GLWidget construction done" << std::endl;
 }
@@ -468,7 +468,7 @@ PMrender::TRenderer * GLWidget::getRenderer()
 
 void GLWidget::genOpenglTexturesForTrees()
 {
-    getEcoSys()->genOpenglTextures();
+    //getEcoSys()->genOpenglTextures();
 }
 
 EcoSystem * GLWidget::getEcoSys()
@@ -2496,7 +2496,7 @@ void GLWidget::mouseDoubleClickEvent(QMouseEvent *event)
             getView()->setAnimFocus(pickpnt);
             getTerrain()->setFocus(pickpnt);
             cerr << "Pick Point = " << pickpnt.x << ", " << pickpnt.y << ", " << pickpnt.z << endl;
-            focuschange = true; focusviz = true;
+            focuschange = true; //focusviz = true;
             atimer->start(10);
         }
         // ignores pick if terrain not intersected, should possibly provide error message to user

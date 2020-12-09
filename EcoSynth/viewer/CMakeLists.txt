@@ -109,7 +109,6 @@
        window.cpp
        shaderProgram.cpp
        trenderer.cpp
-       model_importer.cpp
        specselect_window.cpp
        specpalette_window.cpp
        palette_base.cpp

@@ -46,42 +46,7 @@ void Shape::setColour(GLfloat * col)
     specular[3] = diffuse[3];
 }
 
-void Shape::import_model(model_importer *importer)
-{
-    indices.clear();
-    for (auto &idx : importer->get_idxes())
-    {
-        indices.push_back(idx);
-    }
-
-    texidxes.clear();
-    for (auto &idx : importer->get_tex_idxes())
-    {
-        texidxes.push_back(idx);
-    }
-
-
-    auto verts_temp = importer->get_vertices();
-    auto texcoords = importer->get_texcoords();
-
-    verts.clear();
-    for (int i = 0, texi = 0; i < verts_temp.size(); i += 3, texi += 2)
-    {
-        verts.push_back(verts_temp[i]);
-        verts.push_back(verts_temp[i + 1]);
-        verts.push_back(verts_temp[i + 2]);
-
-        verts.push_back(texcoords[texi]);
-        verts.push_back(texcoords[texi + 1]);
-
-        // normals, import them later properly from obj file, then assign here via model_importer object
-        verts.push_back(1.0f);
-        verts.push_back(0.0f);
-        verts.push_back(0.0f);
-    }
-    modelResources = *importer;
-}
-
+/*
 GLuint Shape::genOpenglTextures(GLuint startingID)
 {
     modelTextures.resize(modelResources.get_teximages().size());
@@ -122,17 +87,6 @@ GLuint Shape::genOpenglTextures(GLuint startingID)
         }
 
         std::string imgstr = "Image " + std::to_string(i);
-        if (img.width() * img.height() > 0)
-        {
-            /*
-            cimg_library::CImgDisplay disp(img, imgstr.c_str());
-            while (!disp.is_closed())
-            {
-                disp.wait();
-            }
-            */
-            //img.display();
-        }
 
         glGenTextures(1, &modelTextures[i]);
         glBindTexture(GL_TEXTURE_2D, modelTextures[i]);
@@ -146,6 +100,7 @@ GLuint Shape::genOpenglTextures(GLuint startingID)
         currID++;
     }
 }
+*/
 
 std::vector<GLuint> Shape::getModelTextures()
 {

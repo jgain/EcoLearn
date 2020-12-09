@@ -380,8 +380,6 @@ public:
     /// completely delete grid
     void delGrid();
 
-    void genOpenglTextures();
-
     /// clear the contents of the grid to empty
     void clear(){ initGrid(); }
 
@@ -466,8 +464,6 @@ public:
 
     /// Set flag to rebind plants
     void redrawPlants(){ dirtyPlants = true; }
-
-    void genOpenglTextures();
 
     /// Getter for maximum tree height
     float getMaxTreeHeight(){ return maxtreehght; }
