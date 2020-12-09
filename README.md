@@ -2,7 +2,9 @@
 
 Code associated with the research paper Kapp et al., "Data-driven Authoring of Large-scale Ecosystems" 
 
-Install instructions, some more explanatory comments and minor refactorings (to make the code clearer to read) are still forthcoming. 
+Install instructions for the interface are in EcoSynth/README-EcoLearn.txt.
+
+Some more explanatory comments and minor refactorings (to make the code clearer to read) are still forthcoming. There is also a neural network component required for the full functioning of the interface. This will be added soon (as of December 9 2020).
 
 # Project structure
 
