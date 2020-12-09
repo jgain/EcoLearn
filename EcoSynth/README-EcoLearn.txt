@@ -1,3 +1,4 @@
+These install instructions have not been thoroughly tested yet, so it might still change in the next two weeks as of 9 December 2020.
 
 UBUNTU INSTALLATION:
 --------------------
@@ -66,7 +67,7 @@ This will prevent checkins with tab indentation or with trailing whitespace.
 Compiling
 ---------
 
-There is a build script that you can run from the root: buildecolearn.sh
+There is a build script that you can run from the same directory as this readme file: buildecolearn.sh
 
 Alternatively, once all the requirements are running, create a subdirectory called build (or
 anything starting with build - you can have multiple build directories), switch
