@@ -20,11 +20,13 @@
 
 
 #include <vector>
+#include <functional>
 
 struct basic_tree;
 class ClusterMaps;
 class ClusterMatrices;
 template<typename T> class ValueGridMap;
+
 
 // See gpusample.cu for comments on all functions. Many functions are not declared here to prevent pollution of the
 // namespace where gpusample.h is included

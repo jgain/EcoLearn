@@ -25,6 +25,8 @@
 #include "ClusterMaps.h"
 #include "ClusterMatrices.h"
 
+#include <functional>
+
 /*
  * UndergrowthSampler
  * Class that handles undergrowth plant sampling. This randomly samples plants from each canopy
