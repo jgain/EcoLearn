@@ -2504,7 +2504,8 @@ void GLWidget::pickInfo(int x, int y)
        sim->pickInfo(x, y);
        cerr << "Elevation (m): " << getTerrain()->getHeight(x, y) << std::endl;
        cerr << "Canopy Height (m): " << getCanopyHeightModel()->get(x, y) * 0.3048f  << endl;
-       cerr << "Canopy shading: " << canopyshading_temp.get(x, y) << endl;
+       if (canopyshading)
+            cerr << "Canopy shading: " << canopyshading_temp.get(x, y) << endl;
    }
 }
 

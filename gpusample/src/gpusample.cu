@@ -39,6 +39,7 @@
 #include <curand_kernel.h>
 
 
+
 struct map_params
 {
     int dupl_gw, dupl_gh;
