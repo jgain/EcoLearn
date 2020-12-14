@@ -173,6 +173,10 @@ public slots:
     void set_underrefine_label();
     void loadConfig(std::string configfilename);
     void openScene(std::string dirName, bool import_cluster_dialog);
+    void showLoadLandscapeDialog();
+    bool checkAndLoadLandscapeDialog();
+    void doFastUndergrowthSampling();
+    void doUndergrowthSynthesis();
 protected:
     void keyPressEvent(QKeyEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

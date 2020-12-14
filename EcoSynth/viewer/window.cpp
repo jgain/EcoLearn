@@ -227,6 +227,23 @@ QSlider *Window::addSpeciesSlider(QVBoxLayout *layout, const QString &label, flo
     return newslider;
 }
 
+void Window::showLoadLandscapeDialog()
+{
+    QMessageBox mbox;
+    mbox.setText("Scene not loaded yet. Load one first at File -> Load Scene");
+    mbox.exec();
+}
+
+bool Window::checkAndLoadLandscapeDialog()
+{
+    if (!perspectiveView->hasSceneLoaded())
+    {
+        showLoadLandscapeDialog();
+        return false;
+    }
+    return true;
+}
+
 void Window::speciesSliderCallback()
 {
         QSlider *sender_slider = (QSlider *)sender();
