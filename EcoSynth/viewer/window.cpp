@@ -1011,10 +1011,11 @@ void Window::saveAsPaint()
     {
         std::string paintfilename = paintfile.toStdString();
 
-        if(endsWith(paintfilename, ".png"))
-            perspectiveView->writePaintMap(paintfilename);
-        else
-            cerr << "Error Window::saveAsPaint: file extension is incorrect, should be PNG" << endl;
+        if (!endsWith(paintfilename, ".png"))
+        {
+            paintfilename += ".png";
+        }
+        perspectiveView->writePaintMap(paintfilename);
     }
 }
 
@@ -1032,10 +1033,11 @@ void Window::saveAsCHM()
     {
         std::string chmfilename = chmfile.toStdString();
 
-        if(endsWith(chmfilename, ".png"))
-            perspectiveView->writeCanopyHeightModel(chmfilename);
-        else
-            cerr << "Error Window::saveAsPaint: file extension is incorrect, should be PNG" << endl;
+        if (!endsWith(chmfilename, ".png"))
+        {
+            chmfilename += ".png";
+        }
+        perspectiveView->writePaintMap(chmfilename);
     }
 
 }
