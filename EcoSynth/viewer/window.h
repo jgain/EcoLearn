@@ -280,6 +280,8 @@ private:
     SpeciesColoursWindow *specColoursWindow = nullptr;
     void loadConfig(configparams params);
     void importClusterFiles(std::vector<std::string> fname_list);
+
+    std::vector<QAction *> enableAtLandscapeLoad;
 };
 
 #endif

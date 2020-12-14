@@ -839,6 +839,13 @@ void Window::openScene()
                                                     | QFileDialog::DontResolveSymlinks);
 
     openScene(dirName.toStdString(), true);
+
+    // if scene load was successful, enable other function of interface
+    if (perspectiveView->hasSceneLoaded())
+    {
+        for (auto ptr : enableAtLandscapeLoad)
+            ptr->setEnabled(true);
+    }
 }
 
 void Window::openScene(std::string dirName, bool import_cluster_dialog)
@@ -881,6 +888,7 @@ void Window::openScene(std::string dirName, bool import_cluster_dialog)
             showImportClusterFiles();
 
         procdrawingButton->setEnabled(true);
+        sampleUndergrowthButton->setEnabled(true);
 
         repaintAllGL();
     }
@@ -1172,56 +1180,81 @@ void Window::createActions()
     saveSceneAsAct = new QAction(tr("Save Scene as"), this);
     saveSceneAsAct->setStatusTip(tr("Save the ecosystem scene under a new name"));
     connect(saveSceneAsAct, SIGNAL(triggered()), this, SLOT(saveAsScene()));
+    saveSceneAsAct->setEnabled(false);
 
     savePaintAsAct = new QAction(tr("Save PaintMap as"), this);
     savePaintAsAct->setStatusTip(tr("Save the paint map under a new name"));
     connect(savePaintAsAct, SIGNAL(triggered()), this, SLOT(saveAsPaint()));
+    savePaintAsAct->setEnabled(false);
 
     saveCHMAsAct = new QAction(tr("Save CHM as"), this);
     saveCHMAsAct->setStatusTip(tr("Save the CHM under a new name"));
     connect(saveCHMAsAct, SIGNAL(triggered()), this, SLOT(saveAsCHM()));
+    saveCHMAsAct->setEnabled(false);
 
     showRenderAct = new QAction(tr("Show Render Options"), this);
     showRenderAct->setCheckable(true);
     showRenderAct->setChecked(false);
     showRenderAct->setStatusTip(tr("Hide/Show Rendering Options"));
     connect(showRenderAct, SIGNAL(triggered()), this, SLOT(showRenderOptions()));
-
-    showRenderAct = new QAction(tr("Show Render Options"), this);
-    showRenderAct->setCheckable(true);
-    showRenderAct->setChecked(false);
-    showRenderAct->setStatusTip(tr("Hide/Show Rendering Options"));
-    connect(showRenderAct, SIGNAL(triggered()), this, SLOT(showRenderOptions()));
+    showRenderAct->setEnabled(true);	// this option can be triggered without a scene being loaded
 
     importCanopyAct = new QAction(tr("Import canopy"), this);
     connect(importCanopyAct, SIGNAL(triggered()), this, SLOT(showImportCanopy()));
+    importCanopyAct->setEnabled(false);
 
     importUndergrowthAct = new QAction(tr("Import undergrowth"), this);
     connect(importUndergrowthAct, SIGNAL(triggered()), this, SLOT(showImportUndergrowth()));
+    importUndergrowthAct->setEnabled(false);
 
     importClusterfilesAct = new QAction(tr("Import cluster files"), this);
     connect(importClusterfilesAct, SIGNAL(triggered()), this, SLOT(showImportClusterFiles()));
-
-    importCanopyshadingAct = new QAction(tr("Import canopy shading"), this);
-    connect(importCanopyshadingAct, SIGNAL(triggered()), this, SLOT(showImportCanopyshading()));
-
-    sampleUndergrowthAct = new QAction(tr("Sample undergrowth"), this);
-    connect(sampleUndergrowthAct, SIGNAL(triggered()), perspectiveView, SLOT(doFastUndergrowthSampling()));
+    importClusterfilesAct->setEnabled(false);
 
     doCompleteUndergrowthSynthesisAct = new QAction(tr("Do complete undergrowth synthesis"), this);
-    connect(doCompleteUndergrowthSynthesisAct, SIGNAL(triggered()), perspectiveView, SLOT(doUndergrowthSynthesisCallback()));
+    connect(doCompleteUndergrowthSynthesisAct, SIGNAL(triggered()), this, SLOT(doUndergrowthSynthesis()));
+    doCompleteUndergrowthSynthesisAct->setEnabled(false);
 
     importDrawingAct = new QAction(tr("Import drawing..."), this);
     connect(importDrawingAct, SIGNAL(triggered()), this, SLOT(importDrawing()));
+    importDrawingAct->setEnabled(false);
 
     convertPaintingAct = new QAction(tr("Convert painting..."), this);
     connect(convertPaintingAct, SIGNAL(triggered()), this, SLOT(convertPainting()));
+    convertPaintingAct->setEnabled(false);
 
     processDrawingAct = new QAction(tr("Process drawing"), this);
     connect(processDrawingAct, SIGNAL(triggered()), perspectiveView, SLOT(send_drawing()));
+    processDrawingAct->setEnabled(false);
 
     viewSpeciesColoursAct = new QAction(tr("Species colours"), this);
     connect(viewSpeciesColoursAct, SIGNAL(triggered()), this, SLOT(showSpeciesColours()));
+    viewSpeciesColoursAct->setEnabled(true);		// this option can be triggered without a scene being loaded
+
+    std::vector<QAction *> tempvec = {
+        saveSceneAsAct,
+        savePaintAsAct,
+        saveCHMAsAct,
+        importCanopyAct,
+        importUndergrowthAct,
+        importClusterfilesAct,
+        doCompleteUndergrowthSynthesisAct,
+        importDrawingAct,
+        convertPaintingAct,
+        processDrawingAct
+    };
+
+    enableAtLandscapeLoad = tempvec;
+}
+
+void Window::doFastUndergrowthSampling()
+{
+    perspectiveView->doFastUndergrowthSampling();
+}
+
+void Window::doUndergrowthSynthesis()
+{
+    perspectiveView->doUndergrowthSynthesisCallback();
 }
 
 void Window::showImportCanopyshading()
