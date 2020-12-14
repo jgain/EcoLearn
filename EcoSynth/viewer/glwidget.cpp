@@ -2076,9 +2076,12 @@ void GLWidget::doCanopyPlacementAndSpeciesAssignment()
 
     auto bt = std::chrono::steady_clock::now().time_since_epoch();
 
+    // reset state that indicates if undergrowth sampled or not (because if canopy changes, undergrowth will also change)
     undergrowth_sampled = false;
 
     getEcoSys()->clearAllPlants(getTerrain());
+    underplants.clear();
+    canopytrees.clear();
 
     report_cudamem("Memory in use before species assignment: ");
 
