@@ -232,7 +232,7 @@ Scene::~Scene()
 
 GLWidget::GLWidget(const QGLFormat& format, int scale_size, QWidget *parent)
     : QGLWidget(format, parent), prj_src_dir(PRJ_SRC_DIR), db_pathname(std::string(PRJ_SRC_DIR) + "/ecodata/sonoma.db"), plant_sqldb_name(db_pathname), cdata(plant_sqldb_name),
-      scale_size(scale_size), sceneloaded(false)
+      scale_size(scale_size), sceneloaded(false), undergrowth_sampled(false)
 {
     assign_times = 0;
     qtWhite = QColor::fromCmykF(0.0, 0.0, 0.0, 0.0);
@@ -1941,6 +1941,15 @@ void GLWidget::doFastUndergrowthSampling()
 {
     canopycalc.lock();
 
+    if (canopytrees.size() == 0)
+    {
+        QMessageBox info(this);
+        info.setText("No canopy trees from which to sample undergrowth");
+        info.exec();
+        canopycalc.unlock();
+        return;
+    }
+
     if (undersynth_init)
     {
         signalUndergrowthSampleStart();
@@ -1979,8 +1988,7 @@ void GLWidget::doFastUndergrowthSampling()
         int time = std::chrono::duration_cast<std::chrono::milliseconds>(et - bt).count();
         std::cout << "Time taken for undergrowth sampling: " << time << " ms" << std::endl;
 
-        std::string initsample_filename = pipeout_dirname + "/initundergrowth_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".pdb";
-        data_importer::write_pdb(initsample_filename, underplants.data(), underplants.data() + underplants.size());
+        undergrowth_sampled = true;
     }
     else
     {
@@ -2002,6 +2010,7 @@ void GLWidget::doUndergrowthSynthesisPart(int startrow, int endrow, int startcol
 void GLWidget::doUndergrowthSynthesis()
 {
     canopycalc.lock();
+
 
     signalUndergrowthRefineStart();
 
@@ -2041,6 +2050,15 @@ void GLWidget::doUndergrowthSynthesis()
 
 void GLWidget::doUndergrowthSynthesisCallback()
 {
+
+    if (!undergrowth_sampled || underplants.size() == 0)
+    {
+        QMessageBox info(this);
+        info.setText("Undergrowth should be sampled first before refinement can be done");
+        info.exec();
+        return;
+    }
+
     std::thread t(&GLWidget::doUndergrowthSynthesis, this);
     t.detach();
 }
