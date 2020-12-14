@@ -200,6 +200,7 @@ private:
     QVBoxLayout *specpalLayout;
 
     QPushButton *procdrawingButton;
+    QPushButton *sampleUndergrowthButton;
 
     // rendering parameters
     float gridSepX, numGridX, gridSepZ, numGridZ, gridWidth, gridIntensity; // grid params
@@ -247,9 +248,6 @@ private:
     QAction *importCanopyAct;
     QAction *importUndergrowthAct;
     QAction *importClusterfilesAct;
-    QAction *importCanopyshadingAct;
-
-    QAction *sampleUndergrowthAct;
 
     QAction *showClusterCountsAct;
 

@@ -683,10 +683,11 @@ Window::Window(int scale_size)
     mainLayout->addWidget(perspectiveView, 0, 1, 10, 1);
     mainLayout->addLayout(palLayout, 0, 2, Qt::AlignTop);
 
-    //QSpacerItem *spaceitem = new QSpacerItem(10, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
     procdrawingButton = new QPushButton("Process drawing");
-    //mainLayout->addItem(spaceitem, 1, 2, Qt::AlignTop);
-    mainLayout->addWidget(procdrawingButton, 2, 2, Qt::AlignTop);
+    mainLayout->addWidget(procdrawingButton, 2, 2, Qt::AlignVCenter);
+
+    sampleUndergrowthButton = new QPushButton("Sample undergrowth");
+    mainLayout->addWidget(sampleUndergrowthButton, 3, 2, Qt::AlignTop);
 
     createActions();
     createMenus();
@@ -709,8 +710,10 @@ Window::Window(int scale_size)
     connect(perspectiveView, &GLWidget::signalEnableSpecSelect, specwindow, &specselect_window::enable);
 
     connect(procdrawingButton, SIGNAL(clicked()), perspectiveView, SLOT(send_drawing()));
+    connect(sampleUndergrowthButton, SIGNAL(clicked()), this, SLOT(doFastUndergrowthSampling()));
 
     procdrawingButton->setEnabled(false);
+    sampleUndergrowthButton->setEnabled(false);
 
     std::cerr << "Window construction done" << std::endl;
     //connect(QApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
@@ -1432,12 +1435,9 @@ void Window::createMenus()
     importMenu->addAction(importUndergrowthAct);
     importMenu->addAction(importDrawingAct);
     importMenu->addAction(importClusterfilesAct);
-    importMenu->addAction(importCanopyshadingAct);
 
     // Actions menu
     actionMenu = menuBar()->addMenu(tr("&Actions"));
-    actionMenu->addAction(sampleUndergrowthAct);
     actionMenu->addAction(convertPaintingAct);
-    actionMenu->addAction(processDrawingAct);
     actionMenu->addAction(doCompleteUndergrowthSynthesisAct);
 }
