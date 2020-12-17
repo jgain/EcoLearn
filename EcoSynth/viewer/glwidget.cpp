@@ -1267,18 +1267,6 @@ void GLWidget::saveScene(std::string dirprefix)
     std::string grassfile = dirprefix + "_grass.txt";
     std::string litfile = dirprefix + "_litterfall.txt";
 
-    // load terrain
-    //getTerrain()->saveElv(terfile);
-
-    // save various overlays for illumination, moisture, and temperature
-    // saveTypeMap(wetfile, TypeMapType::WATER);
-    // saveTypeMap(sunfile, TypeMapType::SUNLIGHT);
-    // saveTypeMap(tmpfile, TypeMapType::TEMPERATURE);
-
-    //if(!getEcoSys()->saveNichePDB(pdbfile))
-    //    cerr << "Error GLWidget::saveScene: saving plane file " << pdbfile << " failed" << endl;
-
-
     getTerrain()->saveElv(terfile, 0.3048);
     if (canopytrees.size() > 0)
     {
@@ -1288,17 +1276,6 @@ void GLWidget::saveScene(std::string dirprefix)
     }
     if (underplants.size() > 0)
         data_importer::write_pdb(undergrowthfile, underplants.data(), underplants.data() + underplants.size());
-
-    /*
-    std::string sunfile = dirprefix+"_sun.txt";
-    std::string wetfile = dirprefix+"_wet.txt";
-    std::string tmpfile = dirprefix+"_tmp.txt";
-    std::string slopefile = dirprefix+"_slope.txt";
-    data_importer::write_txt<ValueMap<float> >(sunfile, &canopyshading_temp);
-    data_importer::write_txt<MapFloat>(wetfile, getSim()->get_average_moisture_map());
-    data_importer::write_txt<MapFloat>(tmpfile, getTemperature());
-    data_importer::write_txt<MapFloat>(slopefile, getSlope());
-    */
 
 }
 
@@ -1755,8 +1732,6 @@ void GLWidget::doCanopyPlacement()
         spacer->convert_trees_species(canopy_placer::spec_convert::TO_IDX);
 
         std::string canopyoutfile = pipeout_dirname + "/canopytrees_" + std::to_string(nspecassign) + "_" + std::to_string(nchmfiles) + ".pdb";
-
-        data_importer::write_pdb(canopyoutfile, realw_coords_trees.data(), realw_coords_trees.data() + realw_coords_trees.size());
 
         std::cout << "Done running canopy placement. Number of trees: " << canopytrees.size() << std::endl;
     }
@@ -2631,9 +2606,6 @@ void GLWidget::send_and_receive_nnet()
     report_cudamem("GPU memory in use after bilinear upsample: ");
 
     correct_chm_scaling();
-
-    // write raw and upsampled chms out to files
-    write_chmfiles();
 
     // set CHM for species assignment. Find a quicker way to do this...?
     set_specassign_chm(getCanopyHeightModel());

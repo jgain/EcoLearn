@@ -1253,6 +1253,7 @@ void Window::createActions()
     connect(viewSpeciesColoursAct, SIGNAL(triggered()), this, SLOT(showSpeciesColours()));
     viewSpeciesColoursAct->setEnabled(true);		// this option can be triggered without a scene being loaded
 
+    // we create a vector of actions to be enabled when a landscape is loaded
     std::vector<QAction *> tempvec = {
         saveSceneAsAct,
         savePaintAsAct,
@@ -1260,7 +1261,7 @@ void Window::createActions()
         importCanopyAct,
         importUndergrowthAct,
         importClusterfilesAct,
-        doCompleteUndergrowthSynthesisAct,
+        //doCompleteUndergrowthSynthesisAct,		// keeping this disabled for now, since it's quite slow
         importDrawingAct,
         convertPaintingAct,
         processDrawingAct
