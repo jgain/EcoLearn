@@ -75,9 +75,13 @@ cmake <options> ..
 Some useful options
 
 -DCMAKE_CXX_COMPILER=g++-4.8          (to force a specific compiler)
+
 -DCMAKE_BUILD_TYPE=Debug|Release|RelWithDebInfo  (to select build type, only choose one option here!!!)
+
 -DCMAKE_CXX_FLAGS_DEBUG="-gdwarf-3"   (helps older versions of GDB interpret debug symbols)
+
 -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O3 -DNDEBUG -g -gdwarf-3" (similar)
+
 -DCMAKE_CXX_FLAGS="-fPIC" (if the compilation complains about position independent code)
 
 
