@@ -1,7 +1,8 @@
-These install instructions have not been thoroughly tested yet, so it might still change in the next two weeks as of 9 December 2020.
 
-UBUNTU INSTALLATION:
---------------------
+# UBUNTU INSTALLATION:
+
+These install instructions have not been thoroughly tested yet, so it might still change a bit in the future.
+
 These are requirements for Ubuntu. In each case, I've listed where to get the software 
 for Ubuntu 18.04. For newer versions of Ubuntu you might not need all the PPAs.
 
@@ -10,29 +11,21 @@ CMake 3.5+, Eigen 3.x, make, automake 1.9, pkg-config, doxygen, GLUT, OpenEXR:
 sudo apt-get install cmake libeigen3-dev make automake pkg-config doxygen freeglut3-dev libopenexr-dev openexr openexr-viewers libgdal-dev libglm-dev
 (might need exrtools also, but this package has been deprecated it seems)
 
-Boost, at least 1.49 (earlier versions don't play nice with C++11):
+## Boost, at least 1.49 (earlier versions don't play nice with C++11):
 sudo apt-get update
 sudo apt-get install libboost-all-dev
 
-OpenCL: (for NVIDIA cards)
+## OpenCL: (for NVIDIA cards)
 
 sudo apt-get install nvidia-opencl-dev 
 
-Qt5:
+## Qt5:
 
 sudo apt-add-repository ppa:ubuntu-sdk-team/ppa
 sudo apt-get update
 sudo apt-get install qtbase5-dev
 
-
-ADDED PACKAGES:
-
-sudo apt install libgl1-mesa-dev libglew-dev
-sudo apt-get install build-essential
-sudo apt-get install libxmu-dev libxi-dev
-sudo apt-get install libcppunit-dev //added in to get testing framework
-
-ImageMagick:
+## ImageMagick:
 
 I couldn't find a PPA for this, and 6.8 is required. I downloaded the source,
 unpacked it, and run ./configure, make, make install. Note, that this needs to be ImageMagick version 6 and not a later version:
@@ -44,9 +37,13 @@ cd ImageMagick-6.8.1-10
 make
 make install
 
-ADDITIONAL REQUIREMENTS:
+## Other packages:
 
-packages/libraries:
+sudo apt install libgl1-mesa-dev libglew-dev
+sudo apt-get install build-essential
+sudo apt-get install libxmu-dev libxi-dev
+sudo apt-get install libcppunit-dev //added in to get testing framework
+
 + SDL2		(install: sudo apt install libsdl2-dev)
 + Assimp	(install: sudo apt install libassimp-dev)
 + CUDA 9 ONLY	(install: this can be complicated sometimes. Apparently you can install from the ubuntu repositories, but I think the recommended way is to download the installer from the NVIDIA website. The reason it must be version 9 is so that it can be compatible with Tensorflow 1.9, which we use with the modified pix2pix script required to be run for the neural net backend)
@@ -85,8 +82,8 @@ Some useful options
 
 Then run make to build. cmake options are sticky. The executable is ./viewer/viewer. System must be run from the build directory because there are some relative paths.
 
-OSX INSTALLATION:
------------------
+# OSX INSTALLATION:
+
 1. Make sure that Xcode command line tools  and homebrew are installed.
 2. Install QT and QTCreator
 	Add CMAKE_PREFIX_PATH:~/Qt/5.11.0/clang_64 (or similar) to bash_profile
@@ -123,12 +120,11 @@ OSX INSTALLATION:
 9. Compile and run as per Ubuntu instructions
 
 
-GUI
----
+# GUI
+
 Once a model has been loaded, it can be rotated by holding down the right mouse button and moving the cursor. Zooming is with the mouse wheel. Double click with the right mouse button to change the focal point on the terrain. There are also various keyboard shortcuts which can be found in glwidgets.cpp
 
-Valgrind Usage
---------------
+# Valgrind Usage
 
 valgrind --leak-check=yes --track-origins=yes ./viewer/viewer
 

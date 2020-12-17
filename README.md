@@ -1,10 +1,17 @@
 # Background
 
 Code associated with the research paper Kapp et al., "Data-driven Authoring of Large-scale Ecosystems" 
+Some more explanatory comments and minor refactorings (to make the code clearer to read) will be provided on an on-going basis.
 
-Install instructions for the interface are in EcoSynth/README-EcoLearn.txt.
+Please note that all install instructions were created for Linux distributions. Mac OSX will possibly also work with the instructions.
 
-Some more explanatory comments and minor refactorings (to make the code clearer to read) are still forthcoming. There is also a neural network component required for the full functioning of the interface. This will be added soon (as of December 9 2020).
+# Interface install instructions
+
+Install instructions for the interface are in EcoSynth/README.txt.
+
+# Neural network install instructions
+
+The neural networks required to run the authoring tool must be downloaded from https://drive.google.com/file/d/11hEJSL0Ub-yxOZATfqDWEh3Ns9v6GEtS/view?usp=sharing as a zip file. Extract the zip file into your home directory, where it should create a directory called 'ecolearn-models'.
 
 # Project structure
 
