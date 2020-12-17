@@ -14,6 +14,14 @@ Install instructions for the interface are in EcoSynth/README.txt.
 
 The neural networks required to run the authoring tool must be downloaded from https://drive.google.com/file/d/11hEJSL0Ub-yxOZATfqDWEh3Ns9v6GEtS/view?usp=sharing as a zip file. Extract the zip file into your home directory, where it should create a directory called 'ecolearn-models'.
 
+# How to run
+
+Once all installation instructions have been followed, and the interface has been successfully built, run the 'run_synthserver.sh' script in the EcoSynth folder, with a parameter that is 4X less than the grid size of the landscape to be fed to the interface. For example, if the landscape consists of a 1024 x 1024 grid, where each cell is one yard (0.9144 meters) in size, then run 'bash run_synthserver.sh 256'. A landscape consisting of a 2048 x 2048 grid will be run as 'bash run_synthserver.sh 512'. 
+
+If the authoring interface is not to be used, the interface is effectively a visualization system. In that case, it can simply be run from its executable at 'EcoSynth/build/viewer/viewer'. 
+
+Some example data can be found at https://drive.google.com/file/d/1lJLlElQHU2g_E16e8KxGtytcs3C9h9C0/view?usp=sharing (this data comprises a 'scene', in the terminology the interface uses), with a cluster file, required to synthesize undergrowth distributions, at https://drive.google.com/file/d/1pz7AjDHrJOYMO0eDLiQNgeNO8MHT4b_M/view?usp=sharing (the cluster file and scene folder can be put anywhere you can easily find it again, as you will be requested by the interface to import the cluster file after importing the scene).
+
 # Project structure
 
 The project is divided into the folders in this directory. A list of the folders, along with a quick summary of the contents, is below:
