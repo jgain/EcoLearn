@@ -1,6 +1,7 @@
 # Background
 
 Code associated with the research paper Kapp et al., "Data-driven Authoring of Large-scale Ecosystems" 
+
 Some more explanatory comments and minor refactorings (to make the code clearer to read) will be provided on an on-going basis.
 
 Please note that all install instructions were created for Linux distributions. Mac OSX will possibly also work with the instructions.
