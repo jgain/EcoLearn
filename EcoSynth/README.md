@@ -103,11 +103,11 @@ Then run make to build. cmake options are sticky. The executable is ./viewer/vie
 	Add CMAKE_PREFIX_PATH:~/Qt/5.11.0/clang_64 (or similar) to bash_profile
 3. Install latest GCC via homebrew:
 
-		from command line: `brew install gcc`
+from command line: `brew install gcc`
 
-		point qtcreator to g++-8 in `/usr/local/bin` (preferences->build&run->manual add)
+point qtcreator to g++-8 in `/usr/local/bin` (preferences->build&run->manual add)
 
-		Edit buildterviewer.sh to point to g++-8 if necessary
+Edit buildterviewer.sh to point to g++-8 if necessary
 4. brew install: cppunit cmake doxygen pkg-config openexr eigen glew gdal libsvm glm
 5. Brew install -cc=gcc-8 boost
 
