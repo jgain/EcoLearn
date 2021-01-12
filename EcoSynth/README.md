@@ -8,46 +8,55 @@ for Ubuntu 18.04. For newer versions of Ubuntu you might not need all the PPAs.
 
 CMake 3.5+, Eigen 3.x, make, automake 1.9, pkg-config, doxygen, GLUT, OpenEXR:
 
-sudo apt-get install cmake libeigen3-dev make automake pkg-config doxygen freeglut3-dev libopenexr-dev openexr openexr-viewers libgdal-dev libglm-dev
+`sudo apt-get install cmake libeigen3-dev make automake pkg-config doxygen freeglut3-dev libopenexr-dev openexr openexr-viewers libgdal-dev libglm-dev`
 (might need exrtools also, but this package has been deprecated it seems)
 
 ## Boost, at least 1.49 (earlier versions don't play nice with C++11):
+
+```
 sudo apt-get update
 sudo apt-get install libboost-all-dev
+```
 
 ## OpenCL: (for NVIDIA cards)
 
-sudo apt-get install nvidia-opencl-dev 
+`sudo apt-get install nvidia-opencl-dev`
 
 ## Qt5:
 
+```
 sudo apt-add-repository ppa:ubuntu-sdk-team/ppa
 sudo apt-get update
 sudo apt-get install qtbase5-dev
+```
 
 ## ImageMagick:
 
 I couldn't find a PPA for this, and 6.8 is required. I downloaded the source,
 unpacked it, and run ./configure, make, make install. Note, that this needs to be ImageMagick version 6 and not a later version:
 
+```
 wget https://www.imagemagick.org/download/releases/ImageMagick-6.8.1-10.tar.xz
 tar -xf ImageMagick-6.8.1-10.tar.xz
 cd ImageMagick-6.8.1-10
 ./configure
 make
 make install
+```
 
 ## Other packages:
 
+```
 sudo apt install libgl1-mesa-dev libglew-dev
 sudo apt-get install build-essential
 sudo apt-get install libxmu-dev libxi-dev
 sudo apt-get install libcppunit-dev //added in to get testing framework
+```
 
-+ SDL2		(install: sudo apt install libsdl2-dev)
-+ Assimp	(install: sudo apt install libassimp-dev)
++ SDL2		(install: `sudo apt install libsdl2-dev`)
++ Assimp	(install: `sudo apt install libassimp-dev`)
 + CUDA 9 ONLY	(install: this can be complicated sometimes. Apparently you can install from the ubuntu repositories, but I think the recommended way is to download the installer from the NVIDIA website. The reason it must be version 9 is so that it can be compatible with Tensorflow 1.9, which we use with the modified pix2pix script required to be run for the neural net backend)
-+ libpng 	(install: sudo apt install libpng-dev)
++ libpng 	(install: `sudo apt install libpng-dev`)
 
 Note that libpng version 1.6 is required (which is the default version in the ubuntu repositories, as of December 2020).
 
