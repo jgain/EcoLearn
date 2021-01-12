@@ -83,15 +83,15 @@ cmake <options> ..
 
 Some useful options
 
--DCMAKE_CXX_COMPILER=g++-4.8          (to force a specific compiler)
+`-DCMAKE_CXX_COMPILER=g++-4.8`          (to force a specific compiler)
 
--DCMAKE_BUILD_TYPE=Debug|Release|RelWithDebInfo  (to select build type, only choose one option here!!!)
+`-DCMAKE_BUILD_TYPE=Debug|Release|RelWithDebInfo`  (to select build type, only choose one option here!!!)
 
--DCMAKE_CXX_FLAGS_DEBUG="-gdwarf-3"   (helps older versions of GDB interpret debug symbols)
+`-DCMAKE_CXX_FLAGS_DEBUG="-gdwarf-3"`   (helps older versions of GDB interpret debug symbols)
 
--DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O3 -DNDEBUG -g -gdwarf-3" (similar)
+`-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O3` -DNDEBUG -g -gdwarf-3" (similar)
 
--DCMAKE_CXX_FLAGS="-fPIC" (if the compilation complains about position independent code)
+`-DCMAKE_CXX_FLAGS="-fPIC"` (if the compilation complains about position independent code)
 
 
 Then run make to build. cmake options are sticky. The executable is ./viewer/viewer. System must be run from the build directory because there are some relative paths.
@@ -102,20 +102,22 @@ Then run make to build. cmake options are sticky. The executable is ./viewer/vie
 2. Install QT and QTCreator
 	Add CMAKE_PREFIX_PATH:~/Qt/5.11.0/clang_64 (or similar) to bash_profile
 3. Install latest GCC via homebrew:
-		from command line: brew install gcc
+		from command line: `brew install gcc`
 		point qtcreator to g++-8 in /usr/local/bin (preferences->build&run->manual add)
 		Edit buildterviewer.sh to point to g++-8 if necessary
 4. brew install: cppunit cmake doxygen pkg-config openexr eigen glew gdal libsvm glm
 5. Brew install -cc=gcc-8 boost
 
 6. 
-	Download imagemagick version 6
+	Download imagemagick version 6:
+	```
 	tar -xvf ImageMagick*
 	cd ./ImageMagick*
 	./configure -CXX g++-8
 	make
 	sudo make install
 	sudo update_dyld_shared_cache
+	```
 
 7. Revise paths in CMakeLists.txt in the places indicated.
 
@@ -124,13 +126,16 @@ Then run make to build. cmake options are sticky. The executable is ./viewer/vie
 	NOTE: the gl3.h file is missing and you need to copy it over manually. If you installed all packages the file should be 	somewhere on the machine. Navigate to root and search for gl3.h and copy it to this directory in the project: cgp1-	prep/khronos_headers/GL
 
 	change:
-
+	```
 	#include <GL/gl3.h> 
 	#include <GL/glu.h> 
+	```
 
 	To: 
+	```
 	#include <OpenGL/gl3.h> 
 	#include <OpenGL/glu.h> 
+	```
 9. Compile and run as per Ubuntu instructions
 
 
@@ -140,7 +145,7 @@ Once a model has been loaded, it can be rotated by holding down the right mouse 
 
 # Valgrind Usage
 
-valgrind --leak-check=yes --track-origins=yes ./viewer/viewer
+`valgrind --leak-check=yes --track-origins=yes ./viewer/viewer`
 
 
 
